@@ -1,0 +1,20 @@
+# Python virtual environment
+venv/
+ENV/
+env/
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Database (Keep your local DB out of GitHub)
+db.sqlite3
+
+# Node modules (if you have them)
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
