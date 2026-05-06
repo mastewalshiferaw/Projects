@@ -1,0 +1,12 @@
+<h1>URL Shortener</h1>
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Shorten</button>
+</form>
+
+{% if new_url %}
+<p>Your short link is: <a href="{{ new_url }}">{{ new_url }} ></a></p>
+
+{% endif %}
