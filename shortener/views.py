@@ -4,7 +4,13 @@ from .forms import ShortenerForm
 
 def redirect_url_view(request, short_code):
 
-    obj = get_object_or_404(ShortenedURL, short_code=short_code)
+    obj=get_object_or_404(ShortenedURL, shortened_url=short_code)
+
+    obj.clicks += 1
+
+    obj.save()
+
+    
     return redirect(obj.original_url)
 
 
