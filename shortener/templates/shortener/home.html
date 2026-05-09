@@ -8,5 +8,7 @@
 
 {% if new_url %}
 <p>Your short link is: <a href="{{ new_url }}">{{ new_url }} ></a></p>
-
+<p>
+    Clicks: {{ obj.clicks }}
+</p>
 {% endif %}
