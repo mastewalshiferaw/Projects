@@ -11,4 +11,16 @@
 <p>
     Clicks: {{ obj.clicks }}
 </p>
+<form method="POST">
+    {% csrf_token %}
+    
+    {% if form.errors %}
+        <div style="color: red;">
+            {{ form.original_url.errors }}
+        </div>
+    {% endif %}
+
+    {{ form.as_p }}
+    <button type="submit">Shorten</button>
+</form>
 {% endif %}
