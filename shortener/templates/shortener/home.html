@@ -1,14 +1,35 @@
 <h1>URL Shortener</h1>
 
+
 <form method="POST">
     {% csrf_token %}
+    {% if form.original_url.errors %}
+        <div style="color: red;">
+            {{ form.original_url.errors }}
+        </div>
+    {% endif %}
     {{ form.as_p }}
     <button type="submit">Shorten</button>
 </form>
 
 {% if new_url %}
-<p>Your short link is: <a href="{{ new_url }}">{{ new_url }} ></a></p>
-<p>
-    Clicks: {{ obj.clicks }}
-</p>
+    <div style="background-color: #f0f0f0; padding: 10px; margin: 10px 0;">
+        <p>Your short link is: <a href="{{ new_url }}">{{ new_url }}</a></p>
+       
+    </div>
 {% endif %}
+
+<hr>
+
+
+<h3>Your Recent Links</h3>
+<ul>
+    {% for link in recent_links %}
+        <li>
+            <strong>{{ link.short_code }}</strong> -> {{ link.original_url }} 
+            (Clicks: {{ link.clicks }})
+        </li>
+    {% empty %}
+        <li>No links created yet in this session.</li>
+    {% endfor %}
+</ul>
