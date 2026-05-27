@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Link Not Found - 404{% endblock %}
+
+{% block content %}
+<div style="text-align: center; padding: 100px 20px;">
+    <h1 style="font-size: 6rem; color: #dc3545; margin-bottom: 0;">404</h1>
+    <h2 style="margin-top: 0;">Oops! That link doesn't exist.</h2>
+    <p style="color: #6c757d; font-size: 1.2rem;">
+        The short code you entered might be broken or the link has been removed.
+    </p>
+    <div style="margin-top: 30px;">
+        <a href="{% url 'home' %}" style="text-decoration: none; background-color: #007bff; color: white; padding: 10px 25px; border-radius: 5px; font-weight: bold;">
+            Return to Homepage
+        </a>
+    </div>
+</div>
+{% endblock %}
