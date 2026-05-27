@@ -23,3 +23,13 @@ class ShortenedURL(models.Model):
 
             if not ShortenedURL.objects.filter(short_code=new_code).exists():
                 return new_code
+            
+
+
+
+def generate_unique_code(self):
+    """
+    Randomly generates a 6-character string and checks the database 
+    to ensure uniqueness before returning.
+    """
+    # your code...

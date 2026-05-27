@@ -2,6 +2,20 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import ShortenedURL
 from .forms import ShortenerForm
 
+def home_view(request):
+    """
+    Handles the creation of new short URLs and manages the 
+    user's recent history via session data.
+    """
+    # your code...
+
+def redirect_url_view(request, short_code):
+    """
+    Finds the original URL for a given short code and 
+    increments the analytics click counter.
+    """
+    # your code...
+
 def redirect_url_view(request, short_code):
     """Increments click count for a URL and redirects the user to the original destination."""
     obj = get_object_or_404(ShortenedURL, short_code=short_code)
