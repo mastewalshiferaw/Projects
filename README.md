@@ -21,7 +21,7 @@ The biggest challenge was handling **Database Collisions**. In a system like thi
 **My Solution:** I overrode the Django Model `save()` method to implement a recursive-style check. The system generates a code, queries the database to see if it exists, and if so, tries again until a unique code is found. This ensures the system remains reliable even as the database grows.
 
 ## ⚙️ Installation
-1. Clone the repo: `git clone <your-url>`
+1. Clone the repo: `git clone https://github.com/mastewalshiferaw/Projects`
 2. Create and activate a virtual environment.
 3. Install dependencies: `pip install -r requirements.txt`
 4. Create a `.env` file based on `.env.example`.
