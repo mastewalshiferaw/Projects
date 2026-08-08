@@ -1,11 +1,15 @@
+import os
 import json
 from django.conf import settings
 from openai import OpenAI
 from pdfminer.high_level import extract_text
 
-# Initialize the OpenAI client using the key from our .env file
-import os
-client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+
+client = OpenAI(
+    base_url="https://api.groq/.com/openai/v1",
+    api_key=os.getenv('OPENAI_API_KEY')
+
+)
 
 def extract_text_from_pdf(pdf_path):
     """Reads a PDF and returns raw text."""
@@ -18,20 +22,18 @@ def extract_text_from_pdf(pdf_path):
 
 def parse_resume_with_ai(raw_text):
     """
-    Sends raw resume text to OpenAI and asks for structured JSON back.
+      Sends raw text to Groq's Llama-3 model and asks for structured JSON back.
     """
     # We tell the AI exactly what format we want.
     system_prompt = """
-    You are an expert HR assistant. Extract the following information from the resume text provided.
+   You are an expert HR assistant. Extract the following information from the resume text provided.
     You must respond ONLY in valid JSON format with these exact keys:
-    - "applicant_name": (string, or null if not found)
-    - "email": (string, or null if not found)
-    - "skills": (array of strings, e.g., ["Python", "Django", "React"])
+    {"applicant_name": "string", "email": "string", "skills": ["skill1", "skill2"]}
     """
 
     try:
         response = client.chat.completions.create(
-            model="gpt-4o-mini", # The cheapest, fastest model
+            model="llama3-8b-8192", 
             response_format={ "type": "json_object" }, # Forces pure JSON output
             messages=[
                 {"role": "system", "content": system_prompt},
@@ -48,5 +50,5 @@ def parse_resume_with_ai(raw_text):
         return parsed_data
         
     except Exception as e:
-        print(f"OpenAI Error: {e}")
+        print(f"Groq API Error: {e}")
         return None
