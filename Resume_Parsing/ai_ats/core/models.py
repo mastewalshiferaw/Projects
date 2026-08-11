@@ -66,3 +66,24 @@ def auto_process_resume(sender, instance, created, **kwargs):
             else:
                 instance.status = 'FAILED'
                 instance.save()
+
+
+# core/models.py (bottom of the file)
+
+# ==========================================
+# THE AUTOMATION (DJANGO SIGNAL)
+# ==========================================
+@receiver(post_save, sender=Resume)
+def auto_process_resume(sender, instance, created, **kwargs):
+    """
+    Triggers automatically when a Resume is saved.
+    Sends the heavy lifting to the Celery background worker.
+    """
+    if created:
+        print(f"New resume detected! Sending to Celery queue: {instance.file.name}")
+        
+        # We import the task down here to prevent "circular import" errors
+        from .tasks import process_resume_task
+        
+        # .delay() is the magic Celery word. It means "Do this in the background!"
+        process_resume_task.delay(instance.id)
