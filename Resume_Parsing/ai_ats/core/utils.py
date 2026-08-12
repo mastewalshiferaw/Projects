@@ -1,21 +1,11 @@
 import os
 import json
-from django.conf import settings
-from openai import OpenAI
-from pdfminer.high_level import extract_text
-
-
-
-
-client = OpenAI(
-    base_url="https://api.groq/.com/openai/v1",
-    api_key=os.getenv('OPENAI_API_KEY')
-
-)
 
 def extract_text_from_pdf(pdf_path):
     """Reads a PDF and returns raw text."""
     try:
+        # Lazy import to avoid import errors when pdfminer isn't installed at import time
+        from pdfminer.high_level import extract_text
         raw_text = extract_text(pdf_path)
         return raw_text.strip()
     except Exception as e:
@@ -34,14 +24,21 @@ def parse_resume_with_ai(raw_text):
     """
 
     try:
+        # Lazy import and client creation so missing SDK doesn't break imports
+        from openai import OpenAI
+        client = OpenAI(
+            base_url="https://api.groq.com/openai/v1",
+            api_key=os.getenv('OPENAI_API_KEY')
+        )
+
         response = client.chat.completions.create(
-            model="llama3-8b-8192", 
-            response_format={ "type": "json_object" }, # Forces pure JSON output
+            model="llama3-8b-8192",
+            response_format={"type": "json_object"},  # Forces pure JSON output
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": raw_text}
             ],
-            temperature=0.2, # Low temperature makes the AI more strict/factual
+            temperature=0.2,  # Low temperature makes the AI more strict/factual
         )
         
         # Extract the text string from the AI's response
