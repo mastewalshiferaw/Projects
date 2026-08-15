@@ -2,6 +2,7 @@
 import os
 import json
 from django.conf import settings # This forces the .env to load first!
+from openai import OpenAI
 
 def extract_text_from_pdf(pdf_path):
     """Reads a PDF and returns raw text."""
@@ -31,15 +32,14 @@ def parse_resume_with_ai(raw_text):
     """
 
     try:
-        # lazy import and client creation
-        from openai import OpenAI
+       
         client = OpenAI(
             base_url="https://api.groq.com/openai/v1",
             api_key=os.getenv('GROQ_API_KEY')
         )
 
         response = client.chat.completions.create(
-            model=model,
+            model="llama-3.1-8b-instant",
             response_format={"type": "json_object"},
             messages=[
                 {"role": "system", "content": system_prompt},
