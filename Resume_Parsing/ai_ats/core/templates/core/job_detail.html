@@ -1,0 +1,65 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<!-- Back button -->
+<a href="{% url 'job_list' %}" class="text-indigo-600 hover:underline mb-4 inline-block">&larr; Back to Jobs</a>
+
+<!-- Job Header -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ job.title }}</h1>
+    <p class="text-gray-700 whitespace-pre-wrap">{{ job.description }}</p>
+</div>
+
+<!-- Candidates List -->
+<h2 class="text-2xl font-bold text-gray-900 mb-4">Candidates ({{ resumes.count }})</h2>
+
+<div class="space-y-4">
+    {% for resume in resumes %}
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        
+        <!-- Candidate Info -->
+        <div>
+            <h3 class="text-xl font-bold text-gray-800">
+                {{ resume.applicant_name|default:"Processing..." }}
+            </h3>
+            <p class="text-sm text-gray-500 mb-2">{{ resume.email|default:"No email found" }}</p>
+            
+            <!-- Skills Pills -->
+            <div class="flex flex-wrap gap-2 mt-2">
+                {% if resume.skills %}
+                    {% for skill in resume.skills %}
+                        <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs font-medium">{{ skill }}</span>
+                    {% endfor %}
+                {% else %}
+                    <span class="text-xs text-gray-400 italic">No skills extracted yet.</span>
+                {% endif %}
+            </div>
+            
+            <!-- Summary (If your AI extracted it!) -->
+            {% if resume.summary %}
+                <p class="text-sm text-gray-600 mt-3 border-l-2 border-indigo-500 pl-3 italic">{{ resume.summary }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Right Side: Status and PDF Link -->
+        <div class="flex flex-col items-end gap-3 min-w-[150px]">
+            {% if resume.status == 'COMPLETED' %}
+                <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Analyzed</span>
+            {% elif resume.status == 'FAILED' %}
+                <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">AI Failed</span>
+            {% else %}
+                <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Pending</span>
+            {% endif %}
+
+            <a href="{{ resume.file.url }}" target="_blank" class="text-sm text-indigo-600 hover:underline">
+                📄 View Original PDF
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="text-center text-gray-500 py-10 bg-white rounded-xl shadow-sm">
+        No resumes uploaded for this job yet. Add some in the Admin panel!
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
