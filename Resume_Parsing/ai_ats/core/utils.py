@@ -42,7 +42,11 @@ def parse_resume_with_ai(raw_text, job_description):
     }}
     """
 
-    models_to_try = ["llama-3.1-8b-instant", "mixtral-8x7b-32768"]
+    # FALLBACK STRATEGY: List of current active Groq models (Updated Aug 2026)
+    models_to_try = [
+        "openai/gpt-oss-20b",   
+        "openai/gpt-oss-120b"  
+    ]
 
     for model_name in models_to_try:
         print(f"[AI] Attempting extraction with model: {model_name}...")

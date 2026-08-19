@@ -1,8 +1,10 @@
+# core/tasks.py
 from celery import shared_task
 from .models import Resume
 from .utils import extract_text_from_pdf, parse_resume_with_ai
 
-@shared_task
+
+@shared_task(rate_limit='20/m')  
 def process_resume_task(resume_id):
     try:
         resume = Resume.objects.get(id=resume_id)
@@ -15,7 +17,6 @@ def process_resume_task(resume_id):
         if raw_text:
             print(f"[CELERY] Sending text to Groq AI...")
             
-           
             job_desc = resume.job.description
             ai_data = parse_resume_with_ai(raw_text, job_desc)
             
