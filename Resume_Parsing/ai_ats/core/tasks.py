@@ -4,15 +4,8 @@ from .utils import extract_text_from_pdf, parse_resume_with_ai
 
 @shared_task
 def process_resume_task(resume_id):
-    """
-    This function runs in the background. It takes an ID, fetches the file, 
-    talks to the AI, and updates the database.
-    """
     try:
-        #Fetch the resume using the ID
         resume = Resume.objects.get(id=resume_id)
-        
-        #Update status to processing
         resume.status = 'PROCESSING'
         resume.save()
         
@@ -21,15 +14,21 @@ def process_resume_task(resume_id):
         
         if raw_text:
             print(f"[CELERY] Sending text to Groq AI...")
-            ai_data = parse_resume_with_ai(raw_text)
+            
+           
+            job_desc = resume.job.description
+            ai_data = parse_resume_with_ai(raw_text, job_desc)
             
             if ai_data:
                 resume.applicant_name = ai_data.get('applicant_name', 'Unknown')
                 resume.email = ai_data.get('email', 'Unknown')
                 resume.skills = ai_data.get('skills', [])
+                
+                resume.match_score = ai_data.get('match_score', 0)
+                
                 resume.status = 'COMPLETED'
                 resume.save()
-                print(f"[CELERY] Success! Processed {resume.applicant_name}")
+                print(f"[CELERY] Success! Match Score: {resume.match_score}%")
                 return "Success"
             else:
                 resume.status = 'FAILED'
@@ -38,7 +37,7 @@ def process_resume_task(resume_id):
         else:
             resume.status = 'FAILED'
             resume.save()
-            return "Failed to extract PDF text"
+            return "Failed to extract text"
             
     except Resume.DoesNotExist:
         return "Resume not found"
