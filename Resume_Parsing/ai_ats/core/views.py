@@ -14,3 +14,8 @@ def job_detail(request, pk):
     resumes = job.resumes.all().order_by('-uploaded_at')
     
     return render(request, 'core/job_detail.html', {'job': job, 'resumes': resumes})
+
+def resume_detail(request, pk):
+    """Fetches a specific candidate's full profile and AI breakdown."""
+    resume = get_object_or_404(Resume, pk=pk)
+    return render(request, 'core/resume_detail.html', {'resume': resume})

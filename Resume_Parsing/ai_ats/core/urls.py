@@ -7,4 +7,6 @@ urlpatterns = [
     
     # The job detail page (e.g., /job/1/)
     path('job/<int:pk>/', views.job_detail, name='job_detail'),
+
+    path('candidate/<int:pk>/', views.resume_detail, name='resume_detail'),
 ]
