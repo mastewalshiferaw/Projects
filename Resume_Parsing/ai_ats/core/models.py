@@ -15,18 +15,39 @@ class Resume(models.Model):
     file = models.FileField(upload_to='resumes/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
+     # 1. Candidate Info
     applicant_name = models.CharField(max_length=150, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
-    skills = models.JSONField(blank=True, null=True)
-    match_score = models.IntegerField(blank=True, null=True)
+    phone = models.CharField(max_length=50, blank=True, null=True)
+    location = models.CharField(max_length=100, blank=True, null=True)
+
+# 2. Structured Resume Data
+    years_of_experience = models.IntegerField(blank=True, null=True, default=0)
+    skills = models.JSONField(blank=True, null=True, default=list)
     
+    # 3. The Match Engine Results
+    match_score = models.IntegerField(blank=True, null=True)
+    match_breakdown = models.JSONField(blank=True, null=True, help_text="Strong, Partial, and Missing matches")
+    ai_explanation = models.TextField(blank=True, null=True)
+    
+    # 4. Pipeline & Status
     STATUS_CHOICES = [
-        ('PENDING', 'Pending'),
+        ('PENDING', 'Pending AI Screening'),
         ('PROCESSING', 'Processing'),
-        ('COMPLETED', 'Completed'),
-        ('FAILED', 'Failed'),
+        ('COMPLETED', 'Screening Completed'),
+        ('FAILED', 'AI Failed'),
     ]
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
+    
+    PIPELINE_CHOICES = [
+        ('APPLIED', 'Applied'),
+        ('SHORTLISTED', 'Shortlisted'),
+        ('INTERVIEW', 'Interviewing'),
+        ('OFFER', 'Offer Extended'),
+        ('HIRED', 'Hired'),
+        ('REJECTED', 'Rejected'),
+    ]
+    pipeline_status = models.CharField(max_length=20, choices=PIPELINE_CHOICES, default='APPLIED')
 
     def __str__(self):
         return f"Resume for {self.job.title} - {self.applicant_name or 'Unknown'}"

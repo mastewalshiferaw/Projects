@@ -12,10 +12,9 @@ def extract_text_from_pdf(pdf_path):
         print(f"Error reading PDF: {e}")
         return None
 
-
 def parse_resume_with_ai(raw_text, job_description):
     """
-    Enterprise AI parser that compares a resume against a job description.
+    Enterprise matching engine. Extracts data and calculates a weighted score.
     """
     client = OpenAI(
         base_url="https://api.groq.com/openai/v1",
@@ -23,52 +22,54 @@ def parse_resume_with_ai(raw_text, job_description):
     )
 
     system_prompt = f"""
-    You are an expert ATS (Applicant Tracking System). 
-    I will provide you with a candidate's resume text.
-    
-    You must compare their resume against this Job Description:
+    You are an expert, highly objective ATS (Applicant Tracking System).
+    Compare the following Candidate Resume against the Job Description.
+
+    Job Description:
     "{job_description}"
-    
-    Calculate a match score from 0 to 100 based on how well their skills and experience match the job description.
-    
-    Return ONLY a valid JSON object with these exact keys:
+
+    RULES:
+    1. Do not hallucinate. If a skill is not explicitly in the resume, it is MISSING.
+    2. Calculate a strict match score (0-100) based on: 
+       - Required Skills (40%)
+       - Experience match (25%)
+       - Education match (15%)
+       - Preferred skills/certs (20%)
+    3. If a MANDATORY requirement (like years of experience) is missing, the score MUST drop significantly.
+
+    You MUST return ONLY a valid JSON object with EXACTLY these keys:
     {{
-      "applicant_name": "string", 
-      "email": "string", 
+      "applicant_name": "string or null",
+      "email": "string or null",
+      "phone": "string or null",
+      "location": "string or null",
+      "years_of_experience": "integer (calculate based on work dates, 0 if none)",
       "skills": ["skill1", "skill2"],
-      "years_of_experience": "integer",
-      "summary": "A 2-sentence professional summary.",
-      "match_score": "integer between 0 and 100"
+      "match_score": "integer between 0 and 100",
+      "match_breakdown": {{
+          "strong_matches": ["list of job requirements the candidate perfectly meets"],
+          "partial_matches": ["list of requirements they partially meet"],
+          "missing_requirements": ["list of job requirements totally missing from resume"]
+      }},
+      "ai_explanation": "A concise, 2-paragraph explanation of why they received this score. Mention specific missing or matching qualifications."
     }}
     """
 
-    # FALLBACK STRATEGY: List of current active Groq models (Updated Aug 2026)
-    models_to_try = [
-        "openai/gpt-oss-20b",   
-        "openai/gpt-oss-120b"  
-    ]
+    models_to_try = ["openai/gpt-oss-20b", "openai/gpt-oss-120b"]
 
     for model_name in models_to_try:
-        print(f"[AI] Attempting extraction with model: {model_name}...")
         try:
             response = client.chat.completions.create(
                 model=model_name,
                 response_format={"type": "json_object"},
                 messages=[
                     {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": raw_text}
+                    {"role": "user", "content": f"CANDIDATE RESUME:\n{raw_text}"}
                 ],
                 temperature=0.1,
             )
-            
-            ai_response_text = response.choices[0].message.content
-            parsed_data = json.loads(ai_response_text)
-            
-            print(f"[AI] Success using {model_name}!")
-            return parsed_data 
-            
+            return json.loads(response.choices[0].message.content)
         except Exception as e:
             print(f"[AI] Model {model_name} failed. Error: {e}")
 
-    print("[AI] CRITICAL: All AI models failed.")
     return None
