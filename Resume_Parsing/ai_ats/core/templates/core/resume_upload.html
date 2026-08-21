@@ -1,0 +1,36 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="max-w-xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-8">
+    
+    <div class="mb-8 text-center">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 mb-4">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+        </div>
+        <h1 class="text-2xl font-extrabold text-gray-900 dark:text-white mb-2">Upload Candidate Resume</h1>
+        <p class="text-gray-500 dark:text-gray-400">Applying for: <span class="font-bold text-indigo-600 dark:text-indigo-400">{{ job.title }}</span></p>
+    </div>
+
+    <!-- enctype="multipart/form-data" is MANDATORY for file uploads! -->
+    <form method="POST" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+        
+        <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center hover:bg-gray-50 dark:hover:bg-gray-750 transition cursor-pointer">
+            <input type="file" name="file" accept=".pdf" required class="block w-full text-sm text-gray-500 dark:text-gray-400
+                file:mr-4 file:py-2.5 file:px-6
+                file:rounded-full file:border-0
+                file:text-sm file:font-bold
+                file:bg-indigo-50 file:text-indigo-700
+                dark:file:bg-indigo-900/30 dark:file:text-indigo-400
+                hover:file:bg-indigo-100 dark:hover:file:bg-indigo-900/50 transition cursor-pointer">
+        </div>
+
+        <div class="flex justify-between items-center pt-4">
+            <a href="{% url 'job_detail' job.id %}" class="text-gray-500 dark:text-gray-400 hover:underline">Cancel</a>
+            <button type="submit" class="px-6 py-3 rounded-lg font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-md">
+                Start AI Analysis
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

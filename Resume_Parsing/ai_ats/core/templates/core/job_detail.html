@@ -11,7 +11,12 @@
 </div>
 
 <!-- Candidates List -->
-<h2 class="text-2xl font-bold text-gray-900 mb-4">Candidates ({{ resumes.count }})</h2>
+<div class="flex justify-between items-center mb-6 mt-8">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Candidates ({{ resumes.count }})</h2>
+    <a href="{% url 'resume_upload' job.pk %}" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow transition">
+        + Upload Resume
+    </a>
+</div>
 
 <div class="space-y-4">
     {% for resume in resumes %}
