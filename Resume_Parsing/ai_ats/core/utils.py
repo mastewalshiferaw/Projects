@@ -38,21 +38,21 @@ def parse_resume_with_ai(raw_text, job_description):
     3. If a MANDATORY requirement (like years of experience) is missing, the score MUST drop significantly.
 
     You MUST return ONLY a valid JSON object with EXACTLY these keys:
-    {{
+    {
       "applicant_name": "string or null",
       "email": "string or null",
       "phone": "string or null",
       "location": "string or null",
-      "years_of_experience": "integer (calculate based on work dates, 0 if none)",
+      "years_of_experience": "integer. Calculate total professional experience based on dates. If unclear, or if dates are missing, output EXACTLY 0. DO NOT GUESS.",
       "skills": ["skill1", "skill2"],
       "match_score": "integer between 0 and 100",
-      "match_breakdown": {{
+      "match_breakdown": {
           "strong_matches": ["list of job requirements the candidate perfectly meets"],
           "partial_matches": ["list of requirements they partially meet"],
           "missing_requirements": ["list of job requirements totally missing from resume"]
       }},
-      "ai_explanation": "A concise, 2-paragraph explanation of why they received this score. Mention specific missing or matching qualifications."
-    }}
+      "ai_explanation": "A concise, 2-paragraph explanation of why they received this score."
+    
     """
 
     models_to_try = ["openai/gpt-oss-20b", "openai/gpt-oss-120b"]
