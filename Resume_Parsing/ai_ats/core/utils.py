@@ -1,104 +1,117 @@
-# core/utils.py
 import os
 import json
+import re
 from openai import OpenAI
 from pdfminer.high_level import extract_text
 from django.conf import settings
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 def extract_text_from_pdf(pdf_path):
+    """Extract and sanitize raw text from PDF."""
     try:
         raw_text = extract_text(pdf_path)
-        return raw_text.strip() if raw_text else None
+        if not raw_text:
+            return ""
+        # Remove multiple newlines, weird symbols, and excessive spaces
+        cleaned = re.sub(r'\s+', ' ', raw_text)
+        return cleaned.strip()
     except Exception as e:
-        print(f"Error reading PDF: {e}")
-        return None
+        print(f"[PDF ERROR] {e}")
+        return ""
 
-def parse_resume_with_ai(raw_text, job_description):
+def smart_local_matcher(raw_text, job_description):
     """
-    Enterprise matching engine. Extracts data and calculates a weighted score
-    using Dynamic Model Discovery to prevent deprecation crashes.
+    Intelligent local fallback using TF-IDF vector similarity.
+    Works offline with zero API calls.
+    """
+    print("[SYSTEM] Using Smart TF-IDF Local Matcher...")
+    
+    if not raw_text or not job_description:
+        return {"match_score": 0, "ai_explanation": "Insufficient text provided."}
+
+    # Calculate TF-IDF Cosine Similarity
+    vectorizer = TfidfVectorizer(stop_words='english')
+    try:
+        tfidf_matrix = vectorizer.fit_transform([job_description, raw_text])
+        similarity = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])[0][0]
+        score = int(similarity * 100)
+    except Exception:
+        score = 25  # safe default
+
+    # Extract common technical/action keywords
+    job_words = set(re.findall(r'\b[a-zA-Z]{3,}\b', job_description.lower()))
+    resume_words = set(re.findall(r'\b[a-zA-Z]{3,}\b', raw_text.lower()))
+    matched_skills = list(job_words.intersection(resume_words))[:8]
+    missing_skills = list(job_words - resume_words)[:8]
+
+    return {
+        "applicant_name": "Applicant (Local Mode)",
+        "email": "N/A",
+        "phone": "N/A",
+        "location": "N/A",
+        "years_of_experience": 0,
+        "skills": matched_skills,
+        "match_score": score,
+        "match_breakdown": {
+            "strong_matches": matched_skills,
+            "partial_matches": [],
+            "missing_requirements": missing_skills
+        },
+        "ai_explanation": f"Calculated using local TF-IDF vector matching (Cosine Similarity: {score}%).",
+        "improvement_suggestions": [
+            f"Consider adding missing keywords found in the job description: {', '.join(missing_skills[:4])}."
+        ]
+    }
+
+def parse_resume_with_ai(raw_text, job_description, is_student_mode=False):
+    """
+    Parses resume against a job description using Groq LLMs.
     """
     api_key = os.getenv('GROQ_API_KEY') or getattr(settings, 'GROQ_API_KEY', None)
     if not api_key:
-        print("Error: GROQ_API_KEY is not set.")
-        return None
+        return smart_local_matcher(raw_text, job_description)
+
+    # Sanitize & truncate text to prevent context blowup (max ~12,000 chars each)
+    clean_resume = raw_text[:12000]
+    clean_job = job_description[:8000]
 
     client = OpenAI(
         base_url="https://api.groq.com/openai/v1",
-        api_key=api_key
+        api_key=api_key,
+        timeout=20.0  # Prevent hanging requests
     )
 
-    system_prompt = """You are an uncompromising, strict Applicant Tracking System (ATS) evaluator. Your task is to evaluate a candidate's resume against a job description with zero tolerance for hallucination.
+    system_prompt = f"""You are an elite Applicant Tracking System (ATS) and Career Reviewer.
+Evaluate the candidate's resume strictly against the provided Job Description.
 
-### STRICT EVALUATION RULES:
-1. ZERO HALLUCINATION POLICY:
-   - A skill, tool, or qualification ONLY exists if explicitly stated in the resume text. 
-   - Never assume or infer skills based on job titles (e.g., do NOT assume a "Frontend Developer" knows React unless "React" is explicitly written).
-
-2. YEARS OF EXPERIENCE CALCULATION:
-   - Calculate total years of experience ONLY using explicit start and end dates (e.g., "Jan 2020 - Dec 2022" = 3 years).
-   - If dates are missing, overlapping, or vague (e.g., just "2020"), calculate only what is clearly proven.
-   - If NO dates are provided at all, you MUST output 0 for `years_of_experience` and set `experience_dates_verified` to false. DO NOT GUESS.
-
-3. STRICT MATCH SCORE CALCULATION (0 - 100):
-   Evaluate four categories:
-   - Required Skills Match (Max 40 pts): (Number of required skills found / Total required skills) * 40
-   - Experience Match (Max 25 pts): Full points if candidate's verified years >= required years; scale down proportionally if less.
-   - Education Match (Max 15 pts): Full points if required degree/level met; 0 if missing.
-   - Preferred Skills / Certifications (Max 20 pts): (Preferred qualifications met / Total preferred) * 20
-   
-   *CRITICAL PENALTY:* If any MANDATORY requirement (minimum years of experience or a mandatory skill) is not explicitly proven, the total match score CANNOT exceed 49.
-
-### OUTPUT FORMAT:
-You MUST respond ONLY with a single valid JSON object following this schema:
-{
-  "applicant_name": "string or null",
-  "email": "string or null",
-  "phone": "string or null",
-  "location": "string or null",
+You MUST respond in valid JSON matching this schema:
+{{
+  "applicant_name": "string",
+  "email": "string",
+  "phone": "string",
+  "location": "string",
   "years_of_experience": 0,
-  "experience_dates_verified": true,
   "skills": ["string"],
   "match_score": 0,
-  "match_breakdown": {
-    "strong_matches": ["Explicitly verified requirements found in resume"],
-    "partial_matches": ["Requirements partially met or unclear"],
-    "missing_requirements": ["Mandatory or preferred requirements not found in resume"]
-  },
-  "ai_explanation": "A concise, 1-paragraph summary detailing why the candidate received this exact score, citing explicit missing or matched items."
-}"""
+  "match_breakdown": {{
+    "strong_matches": ["string"],
+    "partial_matches": ["string"],
+    "missing_requirements": ["string"]
+  }},
+  "ai_explanation": "Summary of fit",
+  "improvement_suggestions": ["Actionable advice for the student on what bullet points or skills to add/fix"]
+}}
+Score is 0-100. Be strict and realistic."""
 
-    user_content = f"""JOB DESCRIPTION:
-\"\"\"{job_description}\"\"\"
+    user_content = f"JOB DESCRIPTION:\n{clean_job}\n\nRESUME TEXT:\n{clean_resume}"
 
-CANDIDATE RESUME:
-\"\"\"{raw_text}\"\"\""""
+    # Stable, current Groq production models in order of capability
+    models = ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"]
 
-    # --- DYNAMIC MODEL DISCOVERY (SMARTER FILTERING) ---
-    try:
-        print("[AI] Fetching list of active models from Groq...")
-        available_models = client.models.list().data
-        
-        models_to_try = []
-        for m in available_models:
-            name = m.id.lower()
-            # Skip security guards, audio, and vision models!
-            if "guard" in name or "whisper" in name or "vision" in name or "llava" in name:
-                continue
-            # Grab valid text models
-            if "llama" in name or "mixtral" in name or "gemma" in name:
-                models_to_try.append(m.id)
-                
-        print(f"[AI] Filtered down to {len(models_to_try)} active Chat models to use!")
-    except Exception as e:
-        print(f"[AI] Failed to fetch models from Groq. Error: {e}")
-        # Failsafe fallback
-        models_to_try = ["llama3-8b-8192", "llama-3.3-70b-versatile", "gemma2-9b-it"]
-
-    # Try the available models one by one
-    for model_name in models_to_try:
+    for model_name in models:
         try:
-            print(f"[AI] Attempting extraction with model: {model_name}...")
+            print(f"[AI] Parsing with {model_name}...")
             response = client.chat.completions.create(
                 model=model_name,
                 response_format={"type": "json_object"},
@@ -106,13 +119,12 @@ CANDIDATE RESUME:
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_content}
                 ],
-                temperature=0.0,  # 0.0 gives the most deterministic and strict scoring
+                temperature=0.1,
             )
-            print(f"[AI] SUCCESS! Data extracted using {model_name}.")
-            return json.loads(response.choices[0].message.content)
-            
+            raw_response = response.choices[0].message.content
+            return json.loads(raw_response)
         except Exception as e:
-            print(f"[AI] Model {model_name} failed. Error: {e}")
+            print(f"[AI ERROR] Model {model_name} failed: {e}")
+            continue
 
-    print("[AI] CRITICAL: All dynamically fetched AI models failed.")
-    return None
+    return smart_local_matcher(clean_resume, clean_job)

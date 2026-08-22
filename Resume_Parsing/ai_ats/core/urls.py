@@ -12,4 +12,11 @@ urlpatterns = [
 
     path('job/new/', views.job_create, name='job_create'),
     path('job/<int:job_id>/upload/', views.resume_upload, name='resume_upload'),
+
+      
+    path('apply/<uuid:public_id>/', views.public_apply, name='public_apply'),
+    
+    
+    path('student/ats-check/', views.student_ats_check, name='student_ats_check'),
+    path('student/ats-check/<int:pk>/', views.student_ats_result, name='student_ats_result'),
 ]

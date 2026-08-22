@@ -3,24 +3,28 @@
 {% block content %}
 <div class="flex justify-between items-center mb-6">
     <h1 class="text-3xl font-bold text-gray-900 dark:text-white transition-colors duration-200">Active Job Postings</h1>
-    <a href="{% url 'job_create' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow transition">
-        + Create Job
+    
+    <!-- COZY SPONGY GREY BUTTON -->
+    <a href="{% url 'job_create' %}" class="bg-zinc-700 hover:bg-zinc-600 text-zinc-50 font-bold py-3 px-6 rounded-2xl shadow-lg shadow-zinc-300 dark:shadow-none transform transition-all duration-300 hover:-translate-y-1 hover:shadow-xl active:scale-95 active:translate-y-1 flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+        Create Job
     </a>
 </div>
+
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     {% for job in jobs %}
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition">
-        <h2 class="text-xl font-bold text-gray-800 mb-2">{{ job.title }}</h2>
-        <p class="text-sm text-gray-500 mb-4">Posted: {{ job.created_at|date:"M d, Y" }}</p>
-        <p class="text-gray-600 line-clamp-3 mb-6">{{ job.description }}</p>
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 hover:shadow-md transition-colors duration-200">
+        <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-2">{{ job.title }}</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Posted: {{ job.created_at|date:"M d, Y" }}</p>
+        <p class="text-gray-600 dark:text-gray-300 line-clamp-3 mb-6">{{ job.description }}</p>
         
-        <a href="{% url 'job_detail' job.pk %}" class="bg-indigo-50 text-indigo-700 px-4 py-2 rounded-lg font-medium hover:bg-indigo-100 transition w-full block text-center">
+        <a href="{% url 'job_detail' job.pk %}" class="bg-zinc-100 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-200 px-4 py-2 rounded-xl font-bold hover:bg-zinc-200 dark:hover:bg-zinc-600 transition w-full block text-center">
             View Candidates &rarr;
         </a>
     </div>
     {% empty %}
-    <div class="col-span-3 text-center text-gray-500 py-10 bg-white rounded-xl shadow-sm">
-        No jobs posted yet. Go to the Admin panel to create one!
+    <div class="col-span-3 text-center text-gray-500 dark:text-gray-400 py-10 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+        No jobs posted yet. Click "Create Job" to get started!
     </div>
     {% endfor %}
 </div>

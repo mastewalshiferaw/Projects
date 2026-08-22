@@ -1,49 +1,53 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import JobPosting, Resume
+# core/views.py (Add to the bottom)
+from .models import StudentATSCheck
 
-def job_list(request):
-    """Fetches all jobs from the database and sends them to the HTML page."""
-    jobs = JobPosting.objects.all().order_by('-created_at')
-    return render(request, 'core/job_list.html', {'jobs': jobs})
 
-def job_detail(request, pk):
-    """Fetches one specific job, and all the resumes tied to it."""
-    job = get_object_or_404(JobPosting, pk=pk)
-    
-   
-    resumes = job.resumes.all().order_by('-uploaded_at')
-    
-    return render(request, 'core/job_detail.html', {'job': job, 'resumes': resumes})
-
-def resume_detail(request, pk):
-    """Fetches a specific candidate's full profile and AI breakdown."""
-    resume = get_object_or_404(Resume, pk=pk)
-    return render(request, 'core/resume_detail.html', {'resume': resume})
-
-def job_create(request):
-    """Handles the creation of a new Job Posting from the UI."""
-    if request.method == 'POST':
-        title = request.POST.get('title')
-        description = request.POST.get('description')
-        
-        if title and description:
-            # Create and save the new job to the database
-            JobPosting.objects.create(title=title, description=description)
-            return redirect('job_list') # Send them back to the homepage
-            
-    return render(request, 'core/job_create.html')
-
-def resume_upload(request, job_id):
-    """Handles uploading a PDF resume to a specific job."""
-    job = get_object_or_404(JobPosting, id=job_id)
+# RECRUITER SIDE: PUBLIC APPLY LINK
+def public_apply(request, public_id):
+    """The public page where a student uploads their CV for a specific job."""
+    job = get_object_or_404(JobPosting, public_id=public_id)
     
     if request.method == 'POST':
-        # Grab the uploaded file from request.FILES
         uploaded_file = request.FILES.get('file')
-        
         if uploaded_file:
+            # Save the resume
+            resume = Resume.objects.create(job=job, file=uploaded_file)
             
-            Resume.objects.create(job=job, file=uploaded_file)
-            return redirect('job_detail', pk=job.id)
+            # Send to background worker
+            from .tasks import process_resume_task
+            process_resume_task.delay(resume.id)
             
-    return render(request, 'core/resume_upload.html', {'job': job})
+            return render(request, 'core/apply_success.html', {'job': job})
+            
+    return render(request, 'core/public_apply.html', {'job': job})
+
+
+
+# STUDENT SIDE: SELF-SERVE ATS CHECKER
+
+def student_ats_check(request):
+    """Where a student pastes a Job Description and uploads their CV to get feedback."""
+    if request.method == 'POST':
+        job_desc = request.POST.get('job_description')
+        cv_file = request.FILES.get('file')
+        
+        if job_desc and cv_file:
+            # Save the student's request
+            ats_check = StudentATSCheck.objects.create(
+                job_description=job_desc, 
+                cv_file=cv_file
+            )
+            
+            # Send to background worker
+            from .tasks import process_student_check_task
+            process_student_check_task.delay(ats_check.id)
+            
+            # Redirect to the loading/results page
+            return redirect('student_ats_result', pk=ats_check.id)
+            
+    return render(request, 'core/student_ats_check.html')
+
+def student_ats_result(request, pk):
+    """Shows the student their Match Score, Missing Skills, and Feedback."""
+    ats_check = get_object_or_404(StudentATSCheck, pk=pk)
+    return render(request, 'core/student_ats_result.html', {'check': ats_check})

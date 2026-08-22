@@ -1,33 +1,34 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-<div class="max-w-xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-8">
+<div class="max-w-xl mx-auto bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 p-8">
     
     <div class="mb-8 text-center">
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 mb-4">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+        <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-zinc-100 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 mb-4 shadow-inner">
+            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
         </div>
-        <h1 class="text-2xl font-extrabold text-gray-900 dark:text-white mb-2">Upload Candidate Resume</h1>
-        <p class="text-gray-500 dark:text-gray-400">Applying for: <span class="font-bold text-indigo-600 dark:text-indigo-400">{{ job.title }}</span></p>
+        <h1 class="text-2xl font-extrabold text-gray-900 dark:text-white mb-2">Upload Resume</h1>
+        <p class="text-gray-500 dark:text-gray-400">Applying for: <span class="font-bold text-zinc-800 dark:text-zinc-200">{{ job.title }}</span></p>
     </div>
 
-    <!-- enctype="multipart/form-data" is MANDATORY for file uploads! -->
-    <form method="POST" enctype="multipart/form-data" class="space-y-6">
+    <form method="POST" enctype="multipart/form-data" class="space-y-8">
         {% csrf_token %}
         
-        <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center hover:bg-gray-50 dark:hover:bg-gray-750 transition cursor-pointer">
+        <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-3xl p-10 text-center hover:bg-zinc-50 dark:hover:bg-gray-750 transition-colors cursor-pointer group">
             <input type="file" name="file" accept=".pdf" required class="block w-full text-sm text-gray-500 dark:text-gray-400
-                file:mr-4 file:py-2.5 file:px-6
-                file:rounded-full file:border-0
+                file:mr-4 file:py-3 file:px-6
+                file:rounded-2xl file:border-0
                 file:text-sm file:font-bold
-                file:bg-indigo-50 file:text-indigo-700
-                dark:file:bg-indigo-900/30 dark:file:text-indigo-400
-                hover:file:bg-indigo-100 dark:hover:file:bg-indigo-900/50 transition cursor-pointer">
+                file:bg-zinc-200 file:text-zinc-800
+                dark:file:bg-zinc-700 dark:file:text-zinc-200
+                group-hover:file:bg-zinc-300 dark:group-hover:file:bg-zinc-600 transition cursor-pointer">
         </div>
 
-        <div class="flex justify-between items-center pt-4">
-            <a href="{% url 'job_detail' job.id %}" class="text-gray-500 dark:text-gray-400 hover:underline">Cancel</a>
-            <button type="submit" class="px-6 py-3 rounded-lg font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-md">
+        <div class="flex justify-between items-center pt-2">
+            <a href="{% url 'job_detail' job.id %}" class="px-6 py-3 rounded-2xl font-bold text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white transition">Cancel</a>
+            <!-- COZY SPONGY GREY BUTTON -->
+            <button type="submit" class="bg-zinc-700 hover:bg-zinc-600 text-zinc-50 font-bold py-3 px-8 rounded-2xl shadow-lg shadow-zinc-300 dark:shadow-none transform transition-all duration-300 hover:-translate-y-1 hover:shadow-xl active:scale-95 active:translate-y-1 flex items-center gap-2">
+                <svg class="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                 Start AI Analysis
             </button>
         </div>

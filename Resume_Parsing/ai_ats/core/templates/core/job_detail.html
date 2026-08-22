@@ -1,84 +1,76 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-<!-- Back button -->
-<a href="{% url 'job_list' %}" class="text-indigo-600 hover:underline mb-4 inline-block">&larr; Back to Jobs</a>
+<a href="{% url 'job_list' %}" class="text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-white transition hover:underline mb-4 inline-block">&larr; Back to Jobs</a>
 
-<!-- Job Header -->
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
-    <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ job.title }}</h1>
-    <p class="text-gray-700 whitespace-pre-wrap">{{ job.description }}</p>
+<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-8 mb-8">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">{{ job.title }}</h1>
+    <p class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{{ job.description }}</p>
 </div>
 
-<!-- Candidates List -->
 <div class="flex justify-between items-center mb-6 mt-8">
     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Candidates ({{ resumes.count }})</h2>
-    <a href="{% url 'resume_upload' job.pk %}" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow transition">
-        + Upload Resume
+    
+    <!-- COZY SPONGY GREY BUTTON -->
+    <a href="{% url 'resume_upload' job.pk %}" class="bg-zinc-700 hover:bg-zinc-600 text-zinc-50 font-bold py-3 px-6 rounded-2xl shadow-lg shadow-zinc-300 dark:shadow-none transform transition-all duration-300 hover:-translate-y-1 hover:shadow-xl active:scale-95 active:translate-y-1 flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+        Upload Resume
     </a>
 </div>
 
 <div class="space-y-4">
     {% for resume in resumes %}
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:shadow-md transition">
         
-        <!-- Candidate Info -->
-        <div>
-      <a href="{% url 'resume_detail' resume.pk %}" class="hover:opacity-75 transition">
-    <h3 class="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-3">
-        {{ resume.applicant_name|default:"Processing..." }}
-        <!-- Match Score Badge -->
-         {% if resume.match_score %}
-            <span class="px-3 py-1 rounded-full text-sm font-black border 
-                {% if resume.match_score >= 80 %}
-                    bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800
-                {% elif resume.match_score >= 50 %}
-                    bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800
-                {% else %}
-                    bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800
-                {% endif %}">
-                {{ resume.match_score }}% Match
-            </span>
-        {% endif %}
-    </h3>
-</a>
-            <p class="text-sm text-gray-500 mb-2">{{ resume.email|default:"No email found" }}</p>
+        <div class="w-full">
+            <a href="{% url 'resume_detail' resume.pk %}" class="hover:opacity-75 transition block w-full">
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-3">
+                    {{ resume.applicant_name|default:"Processing..." }}
+                    {% if resume.match_score %}
+                        <span class="px-3 py-1 rounded-full text-sm font-black border 
+                            {% if resume.match_score >= 80 %}
+                                bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800
+                            {% elif resume.match_score >= 50 %}
+                                bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800
+                            {% else %}
+                                bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800
+                            {% endif %}">
+                            {{ resume.match_score }}% Match
+                        </span>
+                    {% endif %}
+                </h3>
+            </a>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-2 mt-1">{{ resume.email|default:"No email found" }}</p>
             
-            <!-- Skills Pills -->
-            <div class="flex flex-wrap gap-2 mt-2">
+            <div class="flex flex-wrap gap-2 mt-3">
                 {% if resume.skills %}
                     {% for skill in resume.skills %}
-                        <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs font-medium">{{ skill }}</span>
+                        <span class="bg-zinc-100 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 px-3 py-1 rounded-full text-xs font-bold border border-zinc-200 dark:border-zinc-600">{{ skill }}</span>
                     {% endfor %}
                 {% else %}
                     <span class="text-xs text-gray-400 italic">No skills extracted yet.</span>
                 {% endif %}
             </div>
-            
-            <!-- Summary (If your AI extracted it!) -->
-            {% if resume.summary %}
-                <p class="text-sm text-gray-600 mt-3 border-l-2 border-indigo-500 pl-3 italic">{{ resume.summary }}</p>
-            {% endif %}
         </div>
 
-        <!-- Right Side: Status and PDF Link -->
         <div class="flex flex-col items-end gap-3 min-w-[150px]">
             {% if resume.status == 'COMPLETED' %}
                 <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Analyzed</span>
             {% elif resume.status == 'FAILED' %}
                 <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">AI Failed</span>
             {% else %}
-                <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Pending</span>
+                <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider animate-pulse">Pending</span>
             {% endif %}
 
-            <a href="{{ resume.file.url }}" target="_blank" class="text-sm text-indigo-600 hover:underline">
-                📄 View Original PDF
+            <a href="{{ resume.file.url }}" target="_blank" class="text-sm text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-white transition flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                View PDF
             </a>
         </div>
     </div>
     {% empty %}
-    <div class="text-center text-gray-500 py-10 bg-white rounded-xl shadow-sm">
-        No resumes uploaded for this job yet. Add some in the Admin panel!
+    <div class="text-center text-gray-500 dark:text-gray-400 py-10 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+        No resumes uploaded for this job yet.
     </div>
     {% endfor %}
 </div>
