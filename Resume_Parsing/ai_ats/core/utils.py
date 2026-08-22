@@ -74,16 +74,25 @@ You MUST respond ONLY with a single valid JSON object following this schema:
 CANDIDATE RESUME:
 \"\"\"{raw_text}\"\"\""""
 
-    # --- DYNAMIC MODEL DISCOVERY ---
+    # --- DYNAMIC MODEL DISCOVERY (SMARTER FILTERING) ---
     try:
         print("[AI] Fetching list of active models from Groq...")
         available_models = client.models.list().data
-        # Filter for text-generation models (Llama, Mixtral, Gemma)
-        models_to_try = [m.id for m in available_models if any(keyword in m.id.lower() for keyword in ["llama", "mixtral", "gemma"])]
-        print(f"[AI] Found {len(models_to_try)} active models to use!")
+        
+        models_to_try = []
+        for m in available_models:
+            name = m.id.lower()
+            # Skip security guards, audio, and vision models!
+            if "guard" in name or "whisper" in name or "vision" in name or "llava" in name:
+                continue
+            # Grab valid text models
+            if "llama" in name or "mixtral" in name or "gemma" in name:
+                models_to_try.append(m.id)
+                
+        print(f"[AI] Filtered down to {len(models_to_try)} active Chat models to use!")
     except Exception as e:
         print(f"[AI] Failed to fetch models from Groq. Error: {e}")
-        # Failsafe fallback just in case the discovery API is down
+        # Failsafe fallback
         models_to_try = ["llama3-8b-8192", "llama-3.3-70b-versatile", "gemma2-9b-it"]
 
     # Try the available models one by one
