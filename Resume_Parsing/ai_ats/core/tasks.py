@@ -42,17 +42,30 @@ def process_student_check_task(check_id):
         
         raw_text = extract_text_from_pdf(check.cv_file.path)
         if raw_text:
-            ai_data = parse_resume_with_ai(raw_text, check.job_description)
+            
+            ai_data = parse_resume_with_ai(raw_text, check.job_description, is_student_mode=True)
+            
             if ai_data:
                 check.match_score = ai_data.get('match_score', 0)
-               
+                
+                # Map missing requirements to missing skills
                 breakdown = ai_data.get('match_breakdown', {})
                 check.missing_skills = breakdown.get('missing_requirements', [])
-                check.feedback_and_rewrites = ai_data.get('ai_explanation', '')
+                
+                # Format the AI Explanation AND the Improvement Suggestions!
+                explanation = ai_data.get('ai_explanation', '')
+                suggestions = ai_data.get('improvement_suggestions', [])
+                
+                if suggestions:
+                    formatted_suggestions = "\n".join([f"• {s}" for s in suggestions])
+                    check.feedback_and_rewrites = f"{explanation}\n\nActionable Advice:\n{formatted_suggestions}"
+                else:
+                    check.feedback_and_rewrites = explanation
                 
                 check.status = 'COMPLETED'
                 check.save()
                 return "Student Check Processed"
+        
         check.status = 'FAILED'
         check.save()
     except Exception as e:
