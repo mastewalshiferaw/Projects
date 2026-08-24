@@ -97,3 +97,7 @@ def student_ats_result(request, pk):
     """Shows the student their Match Score, Missing Skills, and Feedback."""
     ats_check = get_object_or_404(StudentATSCheck, pk=pk)
     return render(request, 'core/student_ats_result.html', {'check': ats_check})
+
+def landing_page(request):
+    
+    return render(request, 'core/landing.html')

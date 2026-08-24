@@ -1,0 +1,20 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-3xl shadow-sm p-8 mt-10">
+    <h1 class="text-3xl font-extrabold mb-2 text-indigo-600">Student ATS Pre-Check</h1>
+    <p class="text-gray-500 mb-8">Test your CV against a job description before you apply anywhere!</p>
+    
+    <form method="POST" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+        <div>
+            <label class="block font-bold mb-2">Paste Job Description:</label>
+            <textarea name="job_description" rows="6" required class="w-full rounded-2xl border-gray-300 p-4 bg-gray-50 dark:bg-gray-900 text-black dark:text-white" placeholder="Paste the requirements of the job you want..."></textarea>
+        </div>
+        <div>
+            <label class="block font-bold mb-2">Upload Your CV (PDF):</label>
+            <input type="file" name="file" accept=".pdf" required class="block w-full file:py-3 file:px-6 file:rounded-2xl file:bg-indigo-100 file:text-indigo-700 cursor-pointer">
+        </div>
+        <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-2xl hover:bg-indigo-700 transition">Analyze My CV</button>
+    </form>
+</div>
+{% endblock %}

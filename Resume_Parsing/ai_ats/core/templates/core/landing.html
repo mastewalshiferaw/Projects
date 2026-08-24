@@ -1,0 +1,96 @@
+
+{% extends 'core/base.html' %}
+
+{% block content %}
+<!-- Force the Neo-Brutalist off-white background for this page -->
+<style>
+    body { background-color: #F6F6F4 !important; }
+</style>
+
+<div class="min-h-[85vh] flex flex-col items-center justify-center text-center px-4 relative overflow-hidden text-black">
+    
+    <!-- BIG BRACKET HEADER SECTION (Inspired by the image) -->
+    <div class="flex items-center justify-center mb-10 relative">
+        <!-- Left Bracket -->
+        <span class="text-[8rem] md:text-[12rem] font-light text-[#FCE181] leading-none absolute -left-12 md:-left-24 top-1/2 transform -translate-y-1/2 drop-shadow-[4px_4px_0_rgba(0,0,0,1)]">
+            {
+        </span>
+        
+        <div class="flex flex-col items-center z-10 px-8">
+            <h1 class="text-5xl md:text-7xl font-black tracking-tighter leading-[1.1] mb-4">
+                Hire <br>
+                <span class="inline-flex items-center gap-3">
+                    with 
+                    <!-- The Blue Google-style Badge -->
+                    <span class="bg-[#4285F4] text-white px-6 py-1 rounded-[30px] border-4 border-black transform -rotate-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                        AI
+                    </span>
+                </span>
+            </h1>
+            
+            <!-- The Pill Badge (Like the "Addis Ababa" badge) -->
+            <div class="border-2 border-black rounded-full px-8 py-2 font-bold text-sm uppercase tracking-widest bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                ATS Platform
+            </div>
+        </div>
+
+        <!-- Right Bracket -->
+        <span class="text-[8rem] md:text-[12rem] font-light text-[#FCE181] leading-none absolute -right-12 md:-right-24 top-1/2 transform -translate-y-1/2 drop-shadow-[4px_4px_0_rgba(0,0,0,1)]">
+            }
+        </span>
+    </div>
+
+    <!-- NEO-BRUTALIST ACTION CARDS -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl mt-12 z-10">
+        
+        <!-- STUDENT CARD (Asymmetrical Rounding: Top Left & Bottom Right) -->
+        <a href="{% url 'student_ats_check' %}" class="block bg-white border-4 border-black rounded-tl-[50px] rounded-tr-xl rounded-bl-xl rounded-br-[50px] p-10 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 active:translate-y-1 active:translate-x-1 active:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 text-left relative overflow-hidden group">
+            
+            <!-- Fun Shape Element -->
+            <div class="absolute -right-8 -top-8 w-32 h-32 bg-[#34A853] border-4 border-black rounded-full transition-transform group-hover:scale-110"></div>
+            
+            <div class="border-4 border-black bg-[#FBBC04] w-16 h-16 flex items-center justify-center rounded-xl mb-6 relative z-10 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0v6m0-6l-9-5m9 5l9-5"></path></svg>
+            </div>
+            
+            <h2 class="text-3xl font-black mb-4 relative z-10">I am a Student</h2>
+            <p class="text-lg font-medium text-gray-800 mb-8 relative z-10 leading-relaxed border-l-4 border-black pl-4">
+                Test your CV against any job description. Get instant AI feedback, missing skills, and a match score before you apply.
+            </p>
+            
+            <div class="inline-block bg-black text-white font-bold px-6 py-3 border-2 border-black rounded-full group-hover:bg-white group-hover:text-black transition-colors">
+                Test my Resume &rarr;
+            </div>
+        </a>
+
+        <!-- RECRUITER CARD (Asymmetrical Rounding: Top Right & Bottom Left) -->
+        <a href="{% url 'job_list' %}" class="block bg-white border-4 border-black rounded-tl-xl rounded-tr-[50px] rounded-bl-[50px] rounded-br-xl p-10 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 active:translate-y-1 active:translate-x-1 active:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 text-left relative overflow-hidden group">
+            
+            <!-- Fun Shape Element -->
+            <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-[#EA4335] border-4 border-black rounded-[40px] rotate-12 transition-transform group-hover:rotate-45"></div>
+            
+            <div class="border-4 border-black bg-[#4285F4] w-16 h-16 flex items-center justify-center rounded-full mb-6 relative z-10 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            </div>
+            
+            <h2 class="text-3xl font-black mb-4 relative z-10">I am a Recruiter</h2>
+            <p class="text-lg font-medium text-gray-800 mb-8 relative z-10 leading-relaxed border-l-4 border-black pl-4">
+                Post jobs, generate public apply links, and let our strict AI engine automatically grade and rank your candidates.
+            </p>
+            
+            <div class="inline-block bg-black text-white font-bold px-6 py-3 border-2 border-black rounded-full group-hover:bg-[#4285F4] group-hover:text-white transition-colors">
+                Open Dashboard &rarr;
+            </div>
+        </a>
+
+    </div>
+
+    <!-- The Wavy Line at the bottom -->
+    <div class="mt-16 w-full max-w-4xl opacity-70 pointer-events-none">
+        <svg viewBox="0 0 800 100" class="w-full h-12" preserveAspectRatio="none">
+            <path d="M0,50 Q100,0 200,50 T400,50 T600,50 T800,50" fill="none" stroke="black" stroke-width="6" stroke-linecap="round"></path>
+        </svg>
+    </div>
+
+</div>
+{% endblock %}

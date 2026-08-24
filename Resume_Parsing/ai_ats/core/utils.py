@@ -15,7 +15,7 @@ def extract_text_from_pdf(pdf_path):
         raw_text = extract_text(pdf_path)
         if not raw_text:
             return ""
-        # Remove multiple newlines, weird symbols, and excessive spaces
+   
         cleaned = re.sub(r"\s+", " ", raw_text)
         return cleaned.strip()
     except Exception as e:
@@ -24,55 +24,23 @@ def extract_text_from_pdf(pdf_path):
 
 
 def smart_local_matcher(raw_text, job_description):
-    """Intelligent local fallback using TF-IDF vector similarity.
-
-    Works offline with zero API calls.
-    """
-    print("[SYSTEM] Using Smart TF-IDF Local Matcher...")
-
-    if not raw_text or not job_description:
-        return {
-            "match_score": 0,
-            "ai_explanation": "Insufficient text provided.",
-        }
-
-    # Calculate TF-IDF Cosine Similarity
-    vectorizer = TfidfVectorizer(stop_words="english")
-    try:
-        tfidf_matrix = vectorizer.fit_transform([job_description, raw_text])
-        similarity = cosine_similarity(
-            tfidf_matrix[0:1], tfidf_matrix[1:2]
-        )[0][0]
-        score = int(similarity * 100)
-    except Exception:
-        score = 25  # safe default
-
-    # Extract common technical/action keywords
-    job_words = set(re.findall(r"\b[a-zA-Z]{3,}\b", job_description.lower()))
-    resume_words = set(re.findall(r"\b[a-zA-Z]{3,}\b", raw_text.lower()))
-    matched_skills = list(job_words.intersection(resume_words))[:8]
-    missing_skills = list(job_words - resume_words)[:8]
-
+    """Clean fallback if the Groq AI API fails or is offline."""
+    print("[SYSTEM] AI Failed. Using clean local fallback.")
     return {
-        "applicant_name": "Applicant (Local Mode)",
+        "applicant_name": "Applicant (AI Offline)",
         "email": "N/A",
         "phone": "N/A",
         "location": "N/A",
         "years_of_experience": 0,
-        "skills": matched_skills,
-        "match_score": score,
+        "skills": ["Error: AI API Offline"],
+        "match_score": 0,
         "match_breakdown": {
-            "strong_matches": matched_skills,
+            "strong_matches": ["Could not generate: Please check your GROQ_API_KEY or internet connection."],
             "partial_matches": [],
-            "missing_requirements": missing_skills,
+            "missing_requirements": []
         },
-        "ai_explanation": f"Calculated using local TF-IDF vector matching (Cosine Similarity: {score}%).",
-        "improvement_suggestions": [
-            f"Consider adding missing keywords found in the job description: {', '.join(missing_skills[:4])}."
-        ],
+        "ai_explanation": "The Groq AI API could not be reached. Please check Terminal 2 (Celery) to see why the API connection was refused."
     }
-
-
 def parse_resume_with_ai(raw_text, job_description, is_student_mode=False):
     """Parses resume against a job description using Groq LLMs."""
     api_key = os.getenv("GROQ_API_KEY") or getattr(
@@ -81,14 +49,14 @@ def parse_resume_with_ai(raw_text, job_description, is_student_mode=False):
     if not api_key:
         return smart_local_matcher(raw_text, job_description)
 
-    # Sanitize & truncate text to prevent context blowup (max ~12,000 chars each)
+    
     clean_resume = raw_text[:12000]
     clean_job = job_description[:8000]
 
     client = OpenAI(
         base_url="https://api.groq.com/openai/v1",
         api_key=api_key,
-        timeout=20.0,  # Prevent hanging requests
+        timeout=20.0,  
     )
 
     system_prompt = """You are an elite Applicant Tracking System (ATS) and Career Reviewer.

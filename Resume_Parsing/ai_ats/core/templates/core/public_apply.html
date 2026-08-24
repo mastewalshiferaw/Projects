@@ -1,0 +1,13 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-3xl shadow-sm p-8 text-center mt-10">
+    <h1 class="text-3xl font-extrabold mb-2">Apply for: {{ job.title }}</h1>
+    <p class="text-gray-500 mb-8">Please upload your CV in PDF format.</p>
+    
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="file" accept=".pdf" required class="block w-full text-sm text-gray-500 file:mr-4 file:py-3 file:px-6 file:rounded-2xl file:border-0 file:font-bold file:bg-zinc-200 file:text-zinc-800 cursor-pointer mb-6">
+        <button type="submit" class="w-full bg-zinc-700 text-white font-bold py-3 rounded-2xl hover:bg-zinc-600 transition">Submit Application</button>
+    </form>
+</div>
+{% endblock %}
