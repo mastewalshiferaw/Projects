@@ -1,20 +1,39 @@
+<!-- core/templates/core/student_ats_check.html -->
 {% extends 'core/base.html' %}
+
 {% block content %}
-<div class="max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-3xl shadow-sm p-8 mt-10">
-    <h1 class="text-3xl font-extrabold mb-2 text-indigo-600">Student ATS Pre-Check</h1>
-    <p class="text-gray-500 mb-8">Test your CV against a job description before you apply anywhere!</p>
+<div class="max-w-3xl mx-auto bg-white border-4 border-black rounded-[40px] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-10 mt-10 relative overflow-hidden dark:bg-gray-800 dark:border-white dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)]">
     
-    <form method="POST" enctype="multipart/form-data" class="space-y-6">
-        {% csrf_token %}
-        <div>
-            <label class="block font-bold mb-2">Paste Job Description:</label>
-            <textarea name="job_description" rows="6" required class="w-full rounded-2xl border-gray-300 p-4 bg-gray-50 dark:bg-gray-900 text-black dark:text-white" placeholder="Paste the requirements of the job you want..."></textarea>
+    <div class="absolute -right-10 -top-10 w-40 h-40 bg-[#34A853] border-4 border-black rounded-full z-0 opacity-50"></div>
+
+    <div class="relative z-10">
+        <div class="inline-block bg-[#FBBC04] border-2 border-black rounded-full px-4 py-1 font-bold text-sm mb-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+            Student Tool
         </div>
-        <div>
-            <label class="block font-bold mb-2">Upload Your CV (PDF):</label>
-            <input type="file" name="file" accept=".pdf" required class="block w-full file:py-3 file:px-6 file:rounded-2xl file:bg-indigo-100 file:text-indigo-700 cursor-pointer">
-        </div>
-        <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-2xl hover:bg-indigo-700 transition">Analyze My CV</button>
-    </form>
+        <h1 class="text-4xl md:text-5xl font-black mb-2 tracking-tight">Pre-Check Your CV</h1>
+        <p class="text-lg font-medium text-gray-600 dark:text-gray-300 mb-8 border-l-4 border-black dark:border-white pl-4">
+            Test your CV against a job description before you apply anywhere. Get instant AI feedback.
+        </p>
+        
+        <form method="POST" enctype="multipart/form-data" class="space-y-8">
+            {% csrf_token %}
+            
+            <div>
+                <label class="block font-black text-xl mb-3">1. Paste the Job Description</label>
+                <textarea name="job_description" rows="6" required class="w-full rounded-2xl border-4 border-black p-4 bg-[#F6F6F4] text-black focus:ring-0 focus:outline-none focus:shadow-[inset_4px_4px_0px_0px_rgba(0,0,0,0.2)] transition-shadow text-lg font-medium" placeholder="Paste the requirements of the job you want..."></textarea>
+            </div>
+            
+            <div>
+                <label class="block font-black text-xl mb-3">2. Upload Your CV (PDF)</label>
+                <div class="border-4 border-black rounded-2xl p-6 bg-white flex items-center justify-center border-dashed">
+                    <input type="file" name="file" accept=".pdf" required class="block w-full file:mr-4 file:py-3 file:px-6 file:rounded-full file:border-2 file:border-black file:font-black file:bg-[#4285F4] file:text-white file:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:file:translate-y-px hover:file:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] cursor-pointer text-lg font-bold">
+                </div>
+            </div>
+            
+            <button type="submit" class="w-full bg-black text-white dark:bg-white dark:text-black font-black text-xl py-4 rounded-full border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(66,133,244,1)] hover:shadow-[2px_2px_0px_0px_rgba(66,133,244,1)] hover:translate-y-1 transition-all">
+                ANALYZE MY CV &rarr;
+            </button>
+        </form>
+    </div>
 </div>
 {% endblock %}
