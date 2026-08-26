@@ -1,23 +1,25 @@
 from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.decorators import login_required
 
 from .models import JobPosting, Resume, StudentATSCheck
 
 
-# RECRUITER SIDE: MANAGE JOBS AND RESUMES
+# RECRUITER SIDE: THEY MANAGE JOBS AND RESUMES
 
+@login_required
 def job_list(request):
     """List all active job postings for the recruiter dashboard."""
     jobs = JobPosting.objects.order_by('-created_at')
     return render(request, 'core/job_list.html', {'jobs': jobs})
 
-
+@login_required
 def job_detail(request, pk):
     """Show a single job posting and all candidate resumes for it."""
     job = get_object_or_404(JobPosting, pk=pk)
     resumes = job.resumes.order_by('-uploaded_at')
     return render(request, 'core/job_detail.html', {'job': job, 'resumes': resumes})
 
-
+@login_required
 def job_create(request):
     """Create a new job posting from the recruiter dashboard."""
     if request.method == 'POST':
@@ -30,7 +32,7 @@ def job_create(request):
 
     return render(request, 'core/job_create.html')
 
-
+@login_required
 def resume_detail(request, pk):
     """Show the AI analysis for a candidate resume."""
     resume = get_object_or_404(Resume, pk=pk)

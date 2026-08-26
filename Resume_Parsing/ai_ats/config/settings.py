@@ -142,3 +142,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 CELERY_BROKER_URL = os.getenv('REDIS_URL')
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
+
+LOGIN_REDIRECT_URL = 'job_list'
+LOGOUT_REDIRECT_URL = 'landing_page'
