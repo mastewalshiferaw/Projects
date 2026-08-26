@@ -1,33 +1,28 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-<div class="flex justify-between items-center mb-10">
-    <h1 class="text-4xl font-black text-white tracking-tight">Active Job Postings</h1>
-    
-    <!-- Neon-Brutalist Button -->
-    <a href="{% url 'job_create' %}" class="bg-indigo-600 text-white border-2 border-indigo-400 font-bold text-lg py-3 px-6 rounded-xl shadow-[4px_4px_0px_0px_rgba(99,102,241,0.5)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none transition-all flex items-center gap-2">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
-        Create Job
+<div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-zinc-900 dark:text-white tracking-tight">Postings</h1>
+    <a href="{% url 'job_create' %}" class="bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 text-sm font-medium py-2.5 px-5 rounded-lg shadow-sm hover:opacity-80 transition-opacity">
+        + New Job
     </a>
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     {% for job in jobs %}
-    <div class="bg-slate-900 border-2 border-slate-700 rounded-2xl p-8 flex flex-col justify-between hover:-translate-y-2 hover:border-indigo-500 hover:shadow-[8px_8px_0px_0px_rgba(99,102,241,0.3)] transition-all duration-300 relative overflow-hidden group">
-        
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 flex flex-col justify-between shadow-sm">
         <div>
-            <h2 class="text-2xl font-black text-white mb-2">{{ job.title }}</h2>
-            <p class="text-sm font-bold text-slate-400 mb-4 inline-block bg-slate-800 px-3 py-1 rounded-md border border-slate-700">Posted: {{ job.created_at|date:"M d, Y" }}</p>
-            <p class="text-slate-400 font-medium line-clamp-3 mb-8">{{ job.description }}</p>
+            <h2 class="text-xl font-semibold text-zinc-900 dark:text-white mb-1">{{ job.title }}</h2>
+            <p class="text-xs text-zinc-400 mb-4">{{ job.created_at|date:"M d, Y" }}</p>
+            <p class="text-zinc-600 dark:text-zinc-400 text-sm line-clamp-3 mb-6">{{ job.description }}</p>
         </div>
-        
-        <a href="{% url 'job_detail' job.pk %}" class="bg-slate-800 text-indigo-400 border-2 border-slate-700 px-4 py-3 rounded-xl font-bold hover:bg-indigo-600 hover:text-white hover:border-indigo-500 transition-colors w-full block text-center">
-            View Candidates &rarr;
+        <a href="{% url 'job_detail' job.pk %}" class="border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white text-sm font-medium py-2.5 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors w-full text-center">
+            View
         </a>
     </div>
     {% empty %}
-    <div class="col-span-3 text-center text-xl font-bold text-slate-500 py-16 bg-slate-900/50 rounded-3xl border-2 border-dashed border-slate-700">
-        No jobs posted yet. Click "Create Job" to get started!
+    <div class="col-span-3 text-center text-zinc-500 py-16 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-xl">
+        No postings available.
     </div>
     {% endfor %}
 </div>

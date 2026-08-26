@@ -1,24 +1,15 @@
 {% extends 'core/base.html' %}
-
 {% block content %}
-<div class="max-w-xl mx-auto bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800 p-10 text-center mt-12 transition-colors">
-    
-    <div class="inline-block bg-indigo-100 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20 text-indigo-700 dark:text-indigo-400 rounded-full px-4 py-1 font-semibold text-sm mb-6">
-        Application Portal
-    </div>
-    
-    <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-3">Apply for <span class="text-indigo-600 dark:text-indigo-400">{{ job.title }}</span></h1>
-    <p class="text-slate-600 dark:text-slate-400 mb-8">Please upload your CV in PDF format. Our system will securely process your application.</p>
+<div class="max-w-md mx-auto bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800 p-8 sm:p-10 mt-16 text-center">
+    <h1 class="text-xl font-bold text-zinc-900 dark:text-white mb-1">Apply for {{ job.title }}</h1>
+    <p class="text-sm text-zinc-500 mb-8">Upload your CV (PDF only).</p>
     
     <form method="POST" enctype="multipart/form-data" class="space-y-6">
         {% csrf_token %}
-        <div class="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-8 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer">
-            <input type="file" name="file" accept=".pdf" required class="block w-full file:mr-4 file:py-2 file:px-6 file:rounded-full file:border-0 file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 cursor-pointer text-sm text-slate-600 dark:text-slate-400 transition-colors">
+        <div class="border border-dashed border-zinc-300 dark:border-zinc-700 rounded-xl p-4 bg-zinc-50 dark:bg-zinc-800">
+            <input type="file" name="file" accept=".pdf" required class="w-full text-sm text-zinc-500 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-zinc-200 file:text-zinc-900 cursor-pointer">
         </div>
-        
-        <button type="submit" class="w-full bg-indigo-600 text-white font-bold text-lg py-3.5 rounded-full hover:bg-indigo-700 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5">
-            Submit Application &rarr;
-        </button>
+        <button type="submit" class="w-full bg-[#18181B] dark:bg-white text-white dark:text-zinc-900 font-semibold py-3.5 rounded-xl hover:bg-zinc-800 transition-all">Submit Application</button>
     </form>
 </div>
 {% endblock %}

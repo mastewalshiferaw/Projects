@@ -1,83 +1,54 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-<div class="min-h-[85vh] flex flex-col items-center justify-center text-center px-4 relative overflow-hidden">
+<div class="min-h-[80vh] flex flex-col items-center justify-center text-center px-4 relative">
     
-    <!-- Ambient Background Glows -->
-    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none"></div>
-    <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-sky-500/10 rounded-full blur-[100px] pointer-events-none"></div>
-
-    <!-- HERO HEADER SECTION -->
-    <div class="flex items-center justify-center mb-14 relative mt-10 w-full max-w-4xl">
-        
-        <!-- Left Bracket (Ghosted/Muted) -->
-        <span class="text-[8rem] md:text-[14rem] font-extralight text-slate-300 dark:text-slate-600 opacity-50 dark:opacity-30 leading-none absolute left-0 md:-left-10 top-1/2 transform -translate-y-1/2 select-none transition-colors">
-            {
-        </span>
-        
-        <div class="flex flex-col items-center z-10 px-8">
-            <h1 class="text-5xl md:text-7xl font-black tracking-tight leading-[1.1] mb-6 text-slate-900 dark:text-white transition-colors">
-                Hire <br>
-                <span class="inline-flex items-center gap-3 mt-2">
-                    with 
-                    <!-- Sleek Gradient AI Badge with Glow -->
-                    <span class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-6 py-1.5 rounded-full border border-white/20 shadow-[0_0_30px_rgba(99,102,241,0.3)] dark:shadow-[0_0_30px_rgba(99,102,241,0.4)] transform -rotate-2">
-                        AI
-                    </span>
-                </span>
-            </h1>
-            
-            <!-- Refined ATS Platform Pill -->
-            <div class="border border-slate-200 dark:border-white/15 bg-white dark:bg-white/5 backdrop-blur-md rounded-full px-6 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-slate-500 dark:text-slate-300 shadow-sm transition-colors">
-                Next-Gen ATS Platform
-            </div>
+    <div class="max-w-3xl mx-auto mb-16 mt-10">
+        <div class="inline-block border border-zinc-200 dark:border-zinc-800 rounded-full px-4 py-1.5 text-xs font-semibold tracking-widest text-zinc-500 uppercase mb-6 bg-white dark:bg-zinc-900 shadow-sm">
+             ATS Platform
         </div>
-
-        <!-- Right Bracket (Ghosted/Muted) -->
-        <span class="text-[8rem] md:text-[14rem] font-extralight text-slate-300 dark:text-slate-600 opacity-50 dark:opacity-30 leading-none absolute right-0 md:-right-10 top-1/2 transform -translate-y-1/2 select-none transition-colors">
-            }
-        </span>
+        
+        <!-- TYPING EFFECT HEADLINE -->
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tight leading-tight text-zinc-900 dark:text-white mb-6 min-h-[120px] md:min-h-[80px]">
+            <span id="typewriter"></span><span class="animate-pulse text-zinc-400">|</span>
+        </h1>
+        
+        <p class="text-lg text-zinc-500 dark:text-zinc-400 max-w-xl mx-auto">
+            A purely functional, AI-driven tracking system. No clutter. Just results.
+        </p>
     </div>
 
-    <!-- MODERN SAAS ACTION CARDS -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl mt-6 z-10">
-        
-        <!-- STUDENT CARD -->
-        <a href="{% url 'student_ats_check' %}" class="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-10 hover:-translate-y-2 hover:border-sky-400 dark:hover:border-sky-500/50 shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(56,189,248,0.2)] dark:shadow-none transition-all duration-300 text-left overflow-hidden">
-            
-            <!-- Glowing Cyan Icon -->
-            <div class="bg-sky-100 dark:bg-sky-500/10 border border-sky-200 dark:border-sky-500/20 w-14 h-14 flex items-center justify-center rounded-2xl mb-6 shadow-sm dark:shadow-[0_0_15px_rgba(56,189,248,0.2)] transition-colors">
-                <svg class="w-7 h-7 text-sky-500 dark:text-sky-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0v6m0-6l-9-5m9 5l9-5"></path></svg>
-            </div>
-            
-            <h2 class="text-2xl font-bold mb-3 text-slate-900 dark:text-white transition-colors">For Students</h2>
-            <p class="text-slate-600 dark:text-slate-400 mb-8 leading-relaxed transition-colors">
-                Test your CV against any job description. Get instant AI feedback, missing skills, and a match score before you apply.
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
+        <a href="{% url 'student_ats_check' %}" class="group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-8 hover:border-zinc-400 dark:hover:border-zinc-600 transition-all text-left shadow-sm">
+            <h2 class="text-xl font-bold mb-2 text-zinc-900 dark:text-white group-hover:underline">For Candidates &rarr;</h2>
+            <p class="text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed">
+                Test your CV against any job description and receive an objective analysis before applying.
             </p>
-            
-            <div class="inline-flex items-center font-bold text-sky-600 dark:text-sky-400 group-hover:text-sky-500 dark:group-hover:text-sky-300 transition-colors">
-                Test my Resume <span class="ml-2 group-hover:translate-x-1 transition-transform">&rarr;</span>
-            </div>
         </a>
-
-        <!-- RECRUITER CARD -->
-        <a href="{% url 'job_list' %}" class="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-10 hover:-translate-y-2 hover:border-indigo-400 dark:hover:border-indigo-500/50 shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(99,102,241,0.2)] dark:shadow-none transition-all duration-300 text-left overflow-hidden">
-            
-            <!-- Glowing Indigo Icon -->
-            <div class="bg-indigo-100 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20 w-14 h-14 flex items-center justify-center rounded-2xl mb-6 shadow-sm dark:shadow-[0_0_15px_rgba(99,102,241,0.2)] transition-colors">
-                <svg class="w-7 h-7 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-            </div>
-            
-            <h2 class="text-2xl font-bold mb-3 text-slate-900 dark:text-white transition-colors">For Recruiters</h2>
-            <p class="text-slate-600 dark:text-slate-400 mb-8 leading-relaxed transition-colors">
-                Post jobs, generate public apply links, and let our strict AI engine automatically grade and rank your candidates.
+        <a href="{% url 'job_list' %}" class="group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-8 hover:border-zinc-400 dark:hover:border-zinc-600 transition-all text-left shadow-sm">
+            <h2 class="text-xl font-bold mb-2 text-zinc-900 dark:text-white group-hover:underline">For Recruiters &rarr;</h2>
+            <p class="text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed">
+                Generate application links and let the system automatically parse and rank incoming resumes.
             </p>
-            
-            <div class="inline-flex items-center font-bold text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-500 dark:group-hover:text-indigo-300 transition-colors">
-                Open Dashboard <span class="ml-2 group-hover:translate-x-1 transition-transform">&rarr;</span>
-            </div>
         </a>
-
     </div>
 </div>
+
+
+<script>
+    const text = "The minimal standard for hiring.";
+    const speed = 70; 
+    let i = 0;
+    
+    function typeWriter() {
+        if (i < text.length) {
+            document.getElementById("typewriter").innerHTML += text.charAt(i);
+            i++;
+            setTimeout(typeWriter, speed);
+        }
+    }
+    
+   
+    window.onload = typeWriter;
+</script>
 {% endblock %}

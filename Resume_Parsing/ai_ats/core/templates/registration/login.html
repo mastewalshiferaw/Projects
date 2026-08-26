@@ -1,30 +1,41 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-<div class="max-w-md mx-auto bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-3xl p-10 mt-20 shadow-[8px_8px_0px_0px_rgba(99,102,241,0.2)] transition-colors duration-300">
-    <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-6 transition-colors">Recruiter Login</h2>
+<div class="max-w-sm mx-auto bg-white dark:bg-zinc-900 rounded-2xl p-8 sm:p-10 mt-12 shadow-sm border border-zinc-100 dark:border-zinc-800">
+    <h2 class="text-2xl font-bold text-zinc-900 dark:text-white mb-8 tracking-tight">Welcome back.</h2>
     
-    <form method="post" class="space-y-6">
+    <form method="post" class="space-y-4">
         {% csrf_token %}
-        
-        <!-- SAFE REDIRECT LOGIC -->
-        {% if next %}
-            <input type="hidden" name="next" value="{{ next }}">
-        {% else %}
-            <input type="hidden" name="next" value="{% url 'job_list' %}">
-        {% endif %}
+        <input type="hidden" name="next" value="{{ next|default:request.GET.next|default:'/recruiter/' }}">
         
         <div>
-            <label class="block font-bold text-slate-700 dark:text-slate-300 mb-2 transition-colors">Username</label>
-            <input type="text" name="username" required class="w-full p-3 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white outline-none focus:border-indigo-500 transition-colors">
+         
+            <input type="text" name="username" placeholder="Email Address" required 
+                class="w-full px-4 py-3.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-white outline-none focus:bg-white dark:focus:bg-zinc-900 focus:border-zinc-400 transition-colors placeholder-zinc-400">
         </div>
         <div>
-            <label class="block font-bold text-slate-700 dark:text-slate-300 mb-2 transition-colors">Password</label>
-            <input type="password" name="password" required class="w-full p-3 rounded-xl border-2 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white outline-none focus:border-indigo-500 transition-colors">
+            <input type="password" name="password" placeholder="Password" required 
+                class="w-full px-4 py-3.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-white outline-none focus:bg-white dark:focus:bg-zinc-900 focus:border-zinc-400 transition-colors placeholder-zinc-400">
         </div>
-        <button type="submit" class="w-full bg-indigo-600 text-white border-2 border-indigo-400 font-bold text-lg py-3 rounded-xl shadow-[4px_4px_0px_0px_rgba(99,102,241,0.5)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none transition-all">
-            Secure Login &rarr;
+        
+        <button type="submit" class="w-full bg-[#18181B] dark:bg-white text-white dark:text-zinc-900 font-semibold py-3.5 rounded-xl hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-all mt-4">
+            Login with Email
         </button>
     </form>
+
+    <div class="relative mt-8 mb-6">
+        <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-zinc-200 dark:border-zinc-700"></div>
+        </div>
+        <div class="relative flex justify-center text-sm">
+            <span class="px-3 bg-white dark:bg-zinc-900 text-zinc-500">Or continue with</span>
+        </div>
+    </div>
+
+    <!-- Clean Monochrome Google Button -->
+    <button class="w-full flex justify-center items-center gap-3 py-3.5 border border-zinc-200 dark:border-zinc-700 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors text-zinc-900 dark:text-white font-medium">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12.545 10.239v3.821h5.445c-.712 2.315-2.647 3.972-5.445 3.972-3.332 0-6.033-2.701-6.033-6.032s2.701-6.032 6.033-6.032c1.498 0 2.866.549 3.921 1.453l2.814-2.814C17.503 2.988 15.139 2 12.545 2 7.021 2 2.543 6.477 2.543 12s4.478 10 10.002 10c8.396 0 10.249-7.85 9.426-11.761h-9.426z"/></svg>
+        Google
+    </button>
 </div>
 {% endblock %}

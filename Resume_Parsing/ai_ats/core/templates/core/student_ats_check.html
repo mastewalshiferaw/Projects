@@ -1,36 +1,20 @@
 {% extends 'core/base.html' %}
-
 {% block content %}
-<div class="max-w-3xl mx-auto bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-3xl shadow-[8px_8px_0px_0px_rgba(56,189,248,0.2)] p-10 mt-10 relative overflow-hidden transition-colors duration-300">
+<div class="max-w-xl mx-auto bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800 p-8 sm:p-10 mt-10">
+    <h1 class="text-2xl font-bold text-zinc-900 dark:text-white mb-2 tracking-tight">Evaluate CV</h1>
+    <p class="text-sm text-zinc-500 mb-8">Compare your resume against any job description.</p>
     
-    <div class="relative z-10">
-        <div class="inline-block bg-sky-100 dark:bg-sky-500/20 border border-sky-400 dark:border-sky-500 text-sky-600 dark:text-sky-400 rounded-full px-4 py-1 font-bold text-sm mb-4 transition-colors">
-            Student Tool
-        </div>
-        <h1 class="text-4xl md:text-5xl font-black mb-2 tracking-tight text-slate-900 dark:text-white transition-colors">Pre-Check Your CV</h1>
-        <p class="text-lg font-medium text-slate-600 dark:text-slate-400 mb-8 border-l-4 border-sky-500 pl-4 transition-colors">
-            Test your CV against a job description before you apply anywhere. Get instant AI feedback.
-        </p>
+    <form method="POST" enctype="multipart/form-data" class="space-y-5">
+        {% csrf_token %}
+        <textarea name="job_description" rows="5" required placeholder="Paste Job Requirements..." class="w-full px-4 py-3.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-white outline-none focus:bg-white dark:focus:bg-zinc-900 focus:border-zinc-400 transition-colors placeholder-zinc-400"></textarea>
         
-        <form method="POST" enctype="multipart/form-data" class="space-y-8">
-            {% csrf_token %}
-            
-            <div>
-                <label class="block font-bold text-xl mb-3 text-slate-800 dark:text-slate-200 transition-colors">1. Paste the Job Description</label>
-                <textarea name="job_description" rows="6" required class="w-full rounded-xl border-2 border-slate-300 dark:border-slate-700 p-4 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-0 focus:border-sky-500 transition-colors text-lg" placeholder="Paste the requirements of the job you want..."></textarea>
-            </div>
-            
-            <div>
-                <label class="block font-bold text-xl mb-3 text-slate-800 dark:text-slate-200 transition-colors">2. Upload Your CV (PDF)</label>
-                <div class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-6 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center transition-colors">
-                    <input type="file" name="file" accept=".pdf" required class="block w-full file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-2 file:border-sky-500 file:font-bold file:bg-sky-100 file:text-sky-600 dark:file:bg-sky-500/20 dark:file:text-sky-400 hover:file:bg-sky-500 hover:file:text-white cursor-pointer transition-colors">
-                </div>
-            </div>
-            
-            <button type="submit" class="w-full bg-sky-500 text-white font-black text-xl py-4 rounded-xl border-2 border-sky-400 shadow-[6px_6px_0px_0px_rgba(14,165,233,0.4)] hover:translate-y-1 hover:translate-x-1 hover:shadow-none transition-all">
-                ANALYZE MY CV &rarr;
-            </button>
-        </form>
-    </div>
+        <div class="border border-dashed border-zinc-300 dark:border-zinc-700 rounded-xl p-4 bg-zinc-50 dark:bg-zinc-800">
+            <input type="file" name="file" accept=".pdf" required class="w-full text-sm text-zinc-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-zinc-200 file:text-zinc-900 hover:file:bg-zinc-300 cursor-pointer transition-colors">
+        </div>
+        
+        <button type="submit" class="w-full bg-[#18181B] dark:bg-white text-white dark:text-zinc-900 font-semibold py-3.5 rounded-xl hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-all mt-4">
+            Run Analysis
+        </button>
+    </form>
 </div>
 {% endblock %}
