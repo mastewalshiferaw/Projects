@@ -1,25 +1,19 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-[40px] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] border-4 border-black dark:border-white p-12 text-center mt-10">
+<div class="max-w-xl mx-auto bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800 p-12 text-center mt-12 transition-colors">
     
-    <!-- Big Green Checkmark -->
-    <div class="inline-flex items-center justify-center w-24 h-24 bg-[#34A853] border-4 border-black rounded-full shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-8">
-        <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" stroke-width="4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+    <div class="inline-flex items-center justify-center w-20 h-20 bg-green-100 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 rounded-full mb-6">
+        <svg class="w-10 h-10 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
     </div>
     
-    <h1 class="text-5xl font-black text-black dark:text-white mb-4 tracking-tight">Application Received!</h1>
+    <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-4">Application Received!</h1>
     
-    <div class="border-l-4 border-black dark:border-white pl-4 text-left mb-10 mt-6">
-        <p class="text-xl font-medium text-gray-700 dark:text-gray-300">
-            Your CV for <span class="font-black text-black dark:text-white">{{ job.title }}</span> has been successfully submitted.
-        </p>
-        <p class="text-lg text-gray-500 dark:text-gray-400 mt-2">
-            The recruiter's AI system is currently reviewing your application in the background.
-        </p>
-    </div>
+    <p class="text-slate-600 dark:text-slate-400 mb-10 text-lg">
+        Your CV for <strong class="text-slate-900 dark:text-white">{{ job.title }}</strong> has been successfully submitted and is being reviewed.
+    </p>
     
-    <a href="{% url 'landing_page' %}" class="inline-block bg-black text-white dark:bg-white dark:text-black font-black text-xl py-4 px-10 rounded-full border-4 border-black dark:border-white shadow-[4px_4px_0px_0px_rgba(66,133,244,1)] hover:shadow-[2px_2px_0px_0px_rgba(66,133,244,1)] hover:translate-y-1 transition-all">
+    <a href="{% url 'landing_page' %}" class="inline-block bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-lg py-3 px-8 rounded-full hover:bg-slate-800 dark:hover:bg-slate-200 shadow-md transition-all">
         &larr; Return Home
     </a>
 </div>

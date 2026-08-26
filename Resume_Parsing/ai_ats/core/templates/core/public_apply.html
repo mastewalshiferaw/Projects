@@ -1,29 +1,24 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-[40px] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] border-4 border-black dark:border-white p-10 text-center mt-10 relative overflow-hidden">
+<div class="max-w-xl mx-auto bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800 p-10 text-center mt-12 transition-colors">
     
-    <!-- Decorative Shape -->
-    <div class="absolute -right-10 -top-10 w-32 h-32 bg-[#4285F4] border-4 border-black rounded-full z-0 opacity-50"></div>
+    <div class="inline-block bg-indigo-100 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20 text-indigo-700 dark:text-indigo-400 rounded-full px-4 py-1 font-semibold text-sm mb-6">
+        Application Portal
+    </div>
     
-    <div class="relative z-10">
-        <div class="inline-block bg-[#FBBC04] border-2 border-black rounded-full px-4 py-1 font-bold text-sm mb-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-black">
-            Application Portal
+    <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-3">Apply for <span class="text-indigo-600 dark:text-indigo-400">{{ job.title }}</span></h1>
+    <p class="text-slate-600 dark:text-slate-400 mb-8">Please upload your CV in PDF format. Our system will securely process your application.</p>
+    
+    <form method="POST" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+        <div class="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-8 bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer">
+            <input type="file" name="file" accept=".pdf" required class="block w-full file:mr-4 file:py-2 file:px-6 file:rounded-full file:border-0 file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 cursor-pointer text-sm text-slate-600 dark:text-slate-400 transition-colors">
         </div>
         
-        <h1 class="text-4xl font-black text-black dark:text-white mb-2">Apply for: <br><span class="text-[#34A853]">{{ job.title }}</span></h1>
-        <p class="text-lg font-medium text-gray-600 dark:text-gray-300 mb-8 mt-4">Please upload your CV in PDF format. Our AI ATS will automatically review your application for the recruiter.</p>
-        
-        <form method="POST" enctype="multipart/form-data" class="space-y-8">
-            {% csrf_token %}
-            <div class="border-4 border-black dark:border-white rounded-2xl p-8 bg-[#F6F6F4] dark:bg-gray-700 flex items-center justify-center border-dashed">
-                <input type="file" name="file" accept=".pdf" required class="block w-full file:mr-4 file:py-3 file:px-6 file:rounded-full file:border-2 file:border-black file:font-black file:bg-[#4285F4] file:text-white file:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:file:translate-y-px hover:file:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] cursor-pointer text-lg font-bold text-gray-600 dark:text-gray-300">
-            </div>
-            
-            <button type="submit" class="w-full bg-black text-white dark:bg-white dark:text-black font-black text-xl py-4 rounded-full border-4 border-black dark:border-white shadow-[6px_6px_0px_0px_rgba(52,168,83,1)] hover:shadow-[2px_2px_0px_0px_rgba(52,168,83,1)] hover:translate-y-1 transition-all">
-                SUBMIT APPLICATION &rarr;
-            </button>
-        </form>
-    </div>
+        <button type="submit" class="w-full bg-indigo-600 text-white font-bold text-lg py-3.5 rounded-full hover:bg-indigo-700 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5">
+            Submit Application &rarr;
+        </button>
+    </form>
 </div>
 {% endblock %}

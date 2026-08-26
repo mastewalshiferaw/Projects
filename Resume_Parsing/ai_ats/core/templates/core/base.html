@@ -3,37 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI ATS Sandbox</title>
+    <title>mustCode ATS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = { darkMode: 'class', }
     </script>
-    <style>
-        /* Force the Neo-Brutalist background globally */
-        body { background-color: #F6F6F4; }
-        .dark body { background-color: #1a1a1a; }
-    </style>
+    <script>
+        
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
 </head>
-<body class="text-black dark:text-white transition-colors duration-200 font-sans">
 
-    <!-- Neo-Brutalist Navigation Bar -->
-    <nav class="bg-white dark:bg-gray-900 border-b-4 border-black px-6 py-4 sticky top-0 z-50">
+<body class="bg-slate-50 text-slate-900 dark:bg-[#0B0F19] dark:text-white font-sans antialiased transition-colors duration-300 selection:bg-indigo-500 selection:text-white">
+
+    <!-- Sleek Glassmorphism Navigation Bar -->
+    <nav class="bg-white/80 dark:bg-[#0B0F19]/80 backdrop-blur-md border-b border-slate-200 dark:border-white/10 px-6 py-4 sticky top-0 z-50 transition-colors duration-300">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             
-            <!-- Left Side: Logo -->
-            <a href="{% url 'landing_page' %}" class="text-2xl font-black tracking-tighter flex items-center gap-2">
-                <span class="bg-[#FBBC04] border-2 border-black rounded-md px-2 py-0.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">mustCode</span> 
-                Applicant Tracking System 
+          
+            <a href="{% url 'landing_page' %}" class="flex items-center hover:opacity-80 transition-opacity">
+                <div class="bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 px-4 py-1.5 rounded-full flex items-center font-mono font-bold text-lg shadow-sm dark:shadow-lg transition-colors">
+                    <span class="text-slate-800 dark:text-white">must</span><span class="text-sky-500 dark:text-sky-400">Code</span>
+                </div>
             </a>
             
-            <!-- Right Side: Dark Mode Toggle -->
             <div class="flex items-center gap-6">
-                <button id="theme-toggle" type="button" class="border-2 border-black p-2 rounded-full bg-white dark:bg-gray-800 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-gray-100 transition-all">
-                    <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5 text-black dark:text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
-                    <svg id="theme-toggle-light-icon" class="hidden w-5 h-5 text-black dark:text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                
+                <button id="theme-toggle" type="button" class="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800">
+                    <svg id="theme-toggle-dark-icon" class="hidden w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    <svg id="theme-toggle-light-icon" class="hidden w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
                 </button>
             </div>
-
         </div>
     </nav>
 
@@ -43,21 +47,22 @@
         {% endblock %}
     </main>
 
-    <!-- Dark Mode JS -->
     <script>
         var themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
         var themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+
         if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             themeToggleLightIcon.classList.remove('hidden');
-            document.documentElement.classList.add('dark');
         } else {
             themeToggleDarkIcon.classList.remove('hidden');
-            document.documentElement.classList.remove('dark');
         }
+
         var themeToggleBtn = document.getElementById('theme-toggle');
+
         themeToggleBtn.addEventListener('click', function() {
             themeToggleDarkIcon.classList.toggle('hidden');
             themeToggleLightIcon.classList.toggle('hidden');
+
             if (localStorage.getItem('color-theme')) {
                 if (localStorage.getItem('color-theme') === 'light') {
                     document.documentElement.classList.add('dark');
