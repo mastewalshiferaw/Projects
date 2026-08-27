@@ -6,6 +6,8 @@ from django.contrib.auth import login
 from .models import JobPosting, Resume, StudentATSCheck
 
 
+
+
 # RECRUITER SIDE: THEY MANAGE JOBS AND RESUMES
 
 @login_required
@@ -119,4 +121,21 @@ def signup(request):
     else:
         form = UserCreationForm()
 
+    return render(request, 'registration/signup.html', {'form': form})
+
+def signup(request):
+    """Handles new recruiter registration."""
+    
+    if request.user.is_authenticated:
+        return redirect('job_list')
+        
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user) 
+            return redirect('job_list')
+    else:
+        form = UserCreationForm()
+        
     return render(request, 'registration/signup.html', {'form': form})
