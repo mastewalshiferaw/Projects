@@ -8,7 +8,7 @@
     <form method="post" class="space-y-4">
         {% csrf_token %}
         
-        <!-- Render Django's Secure Form Fields -->
+        
         {% for field in form %}
             <div>
                 <label class="block text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-1">{{ field.label }}</label>
