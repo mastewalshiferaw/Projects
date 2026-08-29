@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-
+from core.views import GoogleLogin, LinkedInLogin
 urlpatterns = [
 
     path('', views.landing_page, name='landing_page'),
@@ -36,5 +36,9 @@ urlpatterns = [
     path('student/ats-check/', views.student_ats_check, name='student_ats_check'),
     path('student/ats-check/<int:pk>/', views.student_ats_result, name='student_ats_result'),
 
-    path('signup/', views.signup, name='signup')
+    path('signup/', views.signup, name='signup'),
+
+
+    path('api/auth/google/', GoogleLogin.as_view(), name='google_login'),
+    path('api/auth/linkedin/', LinkedInLogin.as_view(), name='linkedin_login'),
 ]

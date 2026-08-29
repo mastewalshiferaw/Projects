@@ -5,6 +5,11 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from .models import JobPosting, Resume, StudentATSCheck
 
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.linkedin_oauth2.views import LinkedInOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from dj_rest_auth.registration.views import SocialLoginView
+
 
 
 
@@ -139,3 +144,16 @@ def signup(request):
         form = UserCreationForm()
         
     return render(request, 'registration/signup.html', {'form': form})
+
+
+# Google API Login Endpoint
+class GoogleLogin(SocialLoginView):
+    adapter_class = GoogleOAuth2Adapter
+    callback_url = "http://127.0.0.1:8000/accounts/google/login/callback/"
+    client_class = OAuth2Client
+
+# LinkedIn API Login Endpoint
+class LinkedInLogin(SocialLoginView):
+    adapter_class = LinkedInOAuth2Adapter
+    callback_url = "http://127.0.0.1:8000/accounts/linkedin_oauth2/login/callback/"
+    client_class = OAuth2Client
