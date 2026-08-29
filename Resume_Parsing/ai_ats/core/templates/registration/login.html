@@ -2,11 +2,17 @@
 
 {% block content %}
 <div class="max-w-sm mx-auto bg-white dark:bg-zinc-900 rounded-2xl p-8 sm:p-10 mt-12 shadow-sm border border-zinc-100 dark:border-zinc-800">
-    <h2 class="text-2xl font-bold text-zinc-900 dark:text-white mb-8 tracking-tight">Welcome back.</h2>
+    <h2 class="text-2xl font-bold text-zinc-900 dark:text-white mb-8 tracking-tight">Welcome back!</h2>
     
     <form method="post" class="space-y-4">
         {% csrf_token %}
-        <input type="hidden" name="next" value="{{ next|default:request.GET.next|default:'/recruiter/' }}">
+        {% if next %}
+            <input type="hidden" name="next" value="{{ next }}">
+        {% elif 'next' in request.GET %}
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
+        {% else %}
+            <input type="hidden" name="next" value="{% url 'job_list' %}">
+        {% endif %}
         
         <div>
          
