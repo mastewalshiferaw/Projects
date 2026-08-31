@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -185,3 +186,5 @@ CELERY_TASK_SERIALIZER = 'json'
 
 LOGIN_REDIRECT_URL = 'job_list'
 LOGOUT_REDIRECT_URL = 'landing_page'
+
+SOCIALACCOUNT_LOGIN_ON_GET = True

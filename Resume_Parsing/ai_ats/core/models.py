@@ -1,5 +1,6 @@
 import uuid
 from django.db import models
+from django.db.models import Sum 
 
 class JobPosting(models.Model):
     title = models.CharField(max_length=200)
