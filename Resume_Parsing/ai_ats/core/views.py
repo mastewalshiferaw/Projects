@@ -114,23 +114,8 @@ def landing_page(request):
     return render(request, 'core/landing.html')
 
 def signup(request):
-    if request.user.is_authenticated:
-        return redirect('job_list')
-
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('job_list')
-    else:
-        form = UserCreationForm()
-
-    return render(request, 'registration/signup.html', {'form': form})
-
-def signup(request):
     """Handles new recruiter registration."""
-    
+    # If they are already logged in, send them to the recruiter dashboard
     if request.user.is_authenticated:
         return redirect('job_list')
         
@@ -138,7 +123,9 @@ def signup(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user) 
+          
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            
             return redirect('job_list')
     else:
         form = UserCreationForm()

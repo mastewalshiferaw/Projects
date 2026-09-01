@@ -132,6 +132,26 @@ DATABASES = {
     }
 }
 
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': os.getenv('GOOGLE_CLIENT_ID', ''),
+            'secret': os.getenv('GOOGLE_CLIENT_SECRET', ''),
+            'key': ''
+        },
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+    },
+    'linkedin_oauth2': {
+        'APP': {
+            'client_id': os.getenv('LINKEDIN_CLIENT_ID', ''),
+            'secret': os.getenv('LINKEDIN_CLIENT_SECRET', ''),
+            'key': ''
+        },
+        'SCOPE': ['r_liteprofile', 'r_emailaddress'],
+    }
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
