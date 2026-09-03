@@ -1,0 +1,31 @@
+<div data-id="{{ resume.id }}" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 p-4 rounded-xl shadow-sm cursor-grab hover:shadow-md transition-shadow">
+    
+    <div class="flex justify-between items-start mb-2">
+        <a href="{% url 'resume_detail' resume.pk %}" class="font-bold text-zinc-900 dark:text-white hover:underline text-sm truncate">
+            {{ resume.applicant_name|default:"Processing..." }}
+        </a>
+        
+        {% if resume.match_score %}
+            <span class="px-2 py-0.5 rounded text-xs font-black shadow-sm
+                {% if resume.match_score >= 80 %}bg-zinc-900 text-white dark:bg-white dark:text-zinc-900
+                {% elif resume.match_score >= 50 %}bg-zinc-200 text-zinc-700 dark:bg-zinc-700 dark:text-zinc-300
+                {% else %}bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400{% endif %}">
+                {{ resume.match_score }}
+            </span>
+        {% endif %}
+    </div>
+
+    <p class="text-xs text-zinc-500 mb-3 truncate">{{ resume.email|default:"Parsing data..." }}</p>
+    
+    <div class="flex justify-between items-center border-t border-zinc-100 dark:border-zinc-800 pt-3">
+        {% if resume.status == 'COMPLETED' %}
+            <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 px-2 py-1 rounded">Parsed ✓</span>
+        {% elif resume.status == 'FAILED' %}
+            <span class="text-[10px] font-bold text-rose-600 bg-rose-50 dark:bg-rose-900/20 px-2 py-1 rounded">AI Error ✗</span>
+        {% else %}
+            <span class="text-[10px] font-bold text-amber-600 bg-amber-50 dark:bg-amber-900/20 px-2 py-1 rounded animate-pulse">Pending...</span>
+        {% endif %}
+        
+        <a href="{{ resume.file.url }}" target="_blank" class="text-[10px] font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-white underline">PDF</a>
+    </div>
+</div>
