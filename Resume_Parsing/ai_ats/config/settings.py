@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import dj_database_url
 
 
 # Load environment variables from .env file
@@ -131,6 +132,14 @@ DATABASES = {
         }
     }
 }
+# If DATABASE_URL exists in .env, overwrite the SQLite settings and use PostgreSQL
+if os.getenv('DATABASE_URL'):
+    DATABASES['default'] = dj_database_url.config(
+        default=os.getenv('DATABASE_URL'),
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
+
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
