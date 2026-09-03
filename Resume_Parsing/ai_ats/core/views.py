@@ -9,7 +9,7 @@ from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.linkedin_oauth2.views import LinkedInOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
-
+from django.http import HttpResponse 
 
 
 
@@ -25,8 +25,39 @@ def job_list(request):
 def job_detail(request, pk):
     """Show a single job posting and all candidate resumes for it."""
     job = get_object_or_404(JobPosting, pk=pk)
-    resumes = job.resumes.order_by('-uploaded_at')
-    return render(request, 'core/job_detail.html', {'job': job, 'resumes': resumes})
+    all_resumes = job.resumes.all().order_by('-match_score')
+
+    kanban_data = {
+        'APPLIED': [],
+        'SHORTLISTED': [],
+        'INTERVIEW': [],
+        'OFFER':[],
+        'REJECTED':[]
+    }
+
+    for r in all_resumes:
+        if r.pipeline_status in kanban_data:
+            kanban_data[r.pipeline_status].append(r)
+        else:
+            kanban_data['APPLIED'].append(r)
+    
+    return render(request, 'core/job_detail.html', {'job': job, 'kanban_data': kanban_data, 'total_count': all_resumes.count()})
+
+@login_required
+def update_pipeline_status(request, resume_id):
+    """HTMX Endpoint: Updates the candidate status when dragged and dropped."""
+
+    if request.method == 'POST':
+        resume = get_object_or_404(Resume, id=resume_id)
+        new_status = request.POST.get('status')
+
+        # validate that the status is a real choice
+        valid_statuses = [choice[0] for choice in Resume.PIPELINE_CHOICES]
+        if new_status in valid_statuses:
+            resume.pipeline_status = new_status
+            resume.save()
+
+        return HttpResponse(status=200)
 
 @login_required
 def job_create(request):

@@ -41,4 +41,7 @@ urlpatterns = [
 
     path('api/auth/google/', GoogleLogin.as_view(), name='google_login'),
     path('api/auth/linkedin/', LinkedInLogin.as_view(), name='linkedin_login'),
+
+    #Kanban Drag-and-Drop Endpoint
+    path('recruiter/resume/<int:resume_id>/status/', views.update_pipeline_status, name='update_pipeline_status'),
 ]

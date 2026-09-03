@@ -1,50 +1,108 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-<a href="{% url 'job_list' %}" class="text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-white mb-6 inline-block transition">&larr; Back</a>
+<a href="{% url 'job_list' %}" class="text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-white mb-6 inline-block transition">&larr; Back to Postings</a>
 
-<div class="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 mb-8 flex justify-between items-center">
+<div class="flex justify-between items-end mb-8">
     <div>
-        <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Public Link</p>
-        <p class="text-sm font-mono text-zinc-900 dark:text-zinc-300">{{ request.scheme }}://{{ request.get_host }}{% url 'public_apply' job.public_id %}</p>
+        <h1 class="text-3xl font-bold text-zinc-900 dark:text-white mb-2">{{ job.title }}</h1>
+        <div class="flex items-center gap-3">
+            <span class="text-sm text-zinc-500">Public Link:</span>
+            <input type="text" readonly value="{{ request.scheme }}://{{ request.get_host }}{% url 'public_apply' job.public_id %}" class="text-xs font-mono bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 px-3 py-1 rounded w-64 outline-none cursor-copy">
+        </div>
     </div>
-</div>
-
-<div class="mb-10">
-    <h1 class="text-3xl font-bold text-zinc-900 dark:text-white mb-3">{{ job.title }}</h1>
-    <p class="text-zinc-600 dark:text-zinc-400 text-sm whitespace-pre-wrap">{{ job.description }}</p>
-</div>
-
-<div class="flex justify-between items-center mb-6">
-    <h2 class="text-xl font-bold text-zinc-900 dark:text-white">Candidates</h2>
-    <a href="{% url 'resume_upload' job.pk %}" class="text-sm font-medium border border-zinc-200 dark:border-zinc-700 px-4 py-2 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800 transition">
-        Manual Upload
+    
+    <a href="{% url 'resume_upload' job.pk %}" class="bg-[#18181B] dark:bg-white text-white dark:text-zinc-900 text-sm font-semibold py-2 px-5 rounded-lg hover:opacity-80 transition-opacity">
+        + Manual Upload
     </a>
 </div>
 
-<div class="space-y-4">
-    {% for resume in resumes %}
-    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-5 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:shadow-sm transition">
-        <div class="w-full">
-            <a href="{% url 'resume_detail' resume.pk %}" class="group block w-full">
-                <h3 class="text-lg font-semibold text-zinc-900 dark:text-white group-hover:underline flex items-center gap-3">
-                    {{ resume.applicant_name|default:"Processing..." }}
-                    {% if resume.match_score %}
-                        <span class="px-2 py-0.5 rounded text-xs font-bold {% if resume.match_score >= 80 %}bg-zinc-900 text-white dark:bg-white dark:text-zinc-900{% else %}bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400{% endif %}">
-                            {{ resume.match_score }}
-                        </span>
-                    {% endif %}
-                </h3>
-            </a>
-            <p class="text-xs text-zinc-500 mt-1">{{ resume.email|default:"No email" }}</p>
+<!-- KANBAN BOARD -->
+<div class="flex overflow-x-auto gap-6 pb-8 snap-x">
+    
+    <!-- Stage: APPLIED -->
+    <div class="min-w-[320px] w-[320px] snap-center flex flex-col h-[600px]">
+        <div class="flex justify-between items-center mb-3 px-1">
+            <h3 class="font-bold text-sm text-zinc-900 dark:text-white uppercase tracking-wider">Applied</h3>
+            <span class="bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 text-xs font-bold px-2 py-0.5 rounded-full">{{ kanban_data.APPLIED|length }}</span>
         </div>
-        <div class="flex flex-col items-end gap-2 min-w-[120px]">
-            <span class="text-xs font-medium text-zinc-500">{{ resume.status }}</span>
-            <a href="{{ resume.file.url }}" target="_blank" class="text-xs font-medium border-b border-zinc-300 dark:border-zinc-600 hover:text-zinc-900 dark:hover:text-white transition">View PDF</a>
+        <div class="kanban-column flex-1 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-3 overflow-y-auto space-y-3" data-status="APPLIED">
+            {% for resume in kanban_data.APPLIED %} {% include 'core/partials/kanban_card.html' %} {% endfor %}
         </div>
     </div>
-    {% empty %}
-    <div class="text-center text-sm text-zinc-500 py-10 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-xl">No candidates yet.</div>
-    {% endfor %}
+
+    <!-- Stage: SHORTLISTED -->
+    <div class="min-w-[320px] w-[320px] snap-center flex flex-col h-[600px]">
+        <div class="flex justify-between items-center mb-3 px-1">
+            <h3 class="font-bold text-sm text-zinc-900 dark:text-white uppercase tracking-wider">Shortlisted</h3>
+            <span class="bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 text-xs font-bold px-2 py-0.5 rounded-full">{{ kanban_data.SHORTLISTED|length }}</span>
+        </div>
+        <div class="kanban-column flex-1 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-3 overflow-y-auto space-y-3" data-status="SHORTLISTED">
+            {% for resume in kanban_data.SHORTLISTED %} {% include 'core/partials/kanban_card.html' %} {% endfor %}
+        </div>
+    </div>
+
+    <!-- Stage: INTERVIEW -->
+    <div class="min-w-[320px] w-[320px] snap-center flex flex-col h-[600px]">
+        <div class="flex justify-between items-center mb-3 px-1">
+            <h3 class="font-bold text-sm text-blue-600 dark:text-blue-400 uppercase tracking-wider">Interviewing</h3>
+            <span class="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-bold px-2 py-0.5 rounded-full">{{ kanban_data.INTERVIEW|length }}</span>
+        </div>
+        <div class="kanban-column flex-1 bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 rounded-2xl p-3 overflow-y-auto space-y-3" data-status="INTERVIEW">
+            {% for resume in kanban_data.INTERVIEW %} {% include 'core/partials/kanban_card.html' %} {% endfor %}
+        </div>
+    </div>
+
+    <!-- Stage: OFFER & HIRED (Combined for space) -->
+    <div class="min-w-[320px] w-[320px] snap-center flex flex-col h-[600px]">
+        <div class="flex justify-between items-center mb-3 px-1">
+            <h3 class="font-bold text-sm text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Offered</h3>
+            <span class="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-xs font-bold px-2 py-0.5 rounded-full">{{ kanban_data.OFFER|length }}</span>
+        </div>
+        <div class="kanban-column flex-1 bg-emerald-50/50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-900/30 rounded-2xl p-3 overflow-y-auto space-y-3" data-status="OFFER">
+            {% for resume in kanban_data.OFFER %} {% include 'core/partials/kanban_card.html' %} {% endfor %}
+        </div>
+    </div>
+
+    <!-- Stage: REJECTED -->
+    <div class="min-w-[320px] w-[320px] snap-center flex flex-col h-[600px]">
+        <div class="flex justify-between items-center mb-3 px-1">
+            <h3 class="font-bold text-sm text-rose-600 dark:text-rose-400 uppercase tracking-wider">Rejected</h3>
+            <span class="bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 text-xs font-bold px-2 py-0.5 rounded-full">{{ kanban_data.REJECTED|length }}</span>
+        </div>
+        <div class="kanban-column flex-1 bg-rose-50/50 dark:bg-rose-900/10 border border-rose-100 dark:border-rose-900/30 rounded-2xl p-3 overflow-y-auto space-y-3" data-status="REJECTED">
+            {% for resume in kanban_data.REJECTED %} {% include 'core/partials/kanban_card.html' %} {% endfor %}
+        </div>
+    </div>
 </div>
+
+<!-- SORTABLE JS & HTMX LOGIC -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var columns = document.querySelectorAll('.kanban-column');
+        
+        columns.forEach(function(col) {
+            new Sortable(col, {
+                group: 'kanban', // Allows dragging between different columns
+                animation: 150,
+                ghostClass: 'opacity-50', // Visually ghosts the card being dragged
+                
+                onEnd: function (evt) {
+                    var itemEl = evt.item; // The card element
+                    var newStatus = evt.to.getAttribute('data-status'); // The column it was dropped in
+                    var resumeId = itemEl.getAttribute('data-id'); // The DB ID of the candidate
+                    
+                    // If it was dropped in the same column, do nothing
+                    if (evt.from === evt.to) return;
+
+                    // FIRE HTMX REQUEST TO DJANGO
+                    htmx.ajax('POST', `/recruiter/resume/${resumeId}/status/`, {
+                        values: { 'status': newStatus },
+                        headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+                    });
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}
