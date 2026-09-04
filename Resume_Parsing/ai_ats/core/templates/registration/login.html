@@ -53,10 +53,10 @@
         </div>
     </div>
 
-    <!-- REAL GOOGLE & LINKEDIN GRID -->
+    <!-- GOOGLE & LINKEDIN GRID -->
     <div class="grid grid-cols-2 gap-3">
         <!-- Google -->
-        <form action="{% provider_login_url 'google' %}" method="post">
+        <form action="/accounts/google/login/" method="post">
             {% csrf_token %}
             <button type="submit" class="w-full flex justify-center items-center py-3 border border-zinc-200 dark:border-zinc-700 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors text-zinc-900 dark:text-white font-medium text-sm">
                 <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -70,7 +70,7 @@
         </form>
 
         <!-- LinkedIn -->
-        <form action="{% provider_login_url 'linkedin_oauth2' %}" method="post">
+        <form action="/accounts/linkedin_oauth2/login/" method="post">
             {% csrf_token %}
             <button type="submit" class="w-full flex justify-center items-center py-3 border border-zinc-200 dark:border-zinc-700 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors text-zinc-900 dark:text-white font-medium text-sm">
                 <svg class="w-5 h-5 mr-2" fill="#0A66C2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -80,6 +80,14 @@
             </button>
         </form>
     </div>
+
+   
+    <div class="mt-8 text-center text-sm text-zinc-500 transition-colors">
+        Don't have an account? 
+        <a href="{% url 'signup' %}" class="font-bold text-zinc-900 dark:text-white hover:underline transition-colors">Sign up</a>
+    </div>
+</div>
+
 
 <script>
 function togglePassword() {

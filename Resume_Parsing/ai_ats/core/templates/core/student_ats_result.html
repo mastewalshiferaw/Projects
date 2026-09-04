@@ -4,11 +4,47 @@
     <a href="{% url 'student_ats_check' %}" class="text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-white mb-6 inline-block transition">&larr; New Check</a>
 
     <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-8 shadow-sm">
+     
+
+<!-- AUTO REFRESH THE PAGE EVERY 5 SECONDS IF PROCESSING -->
+{% if check.status == 'PENDING' or check.status == 'PROCESSING' %}
+    <meta http-equiv="refresh" content="5">
+{% endif %}
+
+<div class="max-w-2xl mx-auto mt-10">
+    <a href="{% url 'student_ats_check' %}" class="text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-white mb-6 inline-block transition">&larr; New Check</a>
+
+    <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-8 shadow-sm">
+        
         {% if check.status == 'PENDING' or check.status == 'PROCESSING' %}
-            <div class="text-center py-10">
-                <h2 class="text-xl font-bold animate-pulse text-zinc-900 dark:text-white">Analyzing Document...</h2>
+            <!-- CREATIVE LOADING ANIMATION -->
+            <div class="text-center py-16 flex flex-col items-center">
+                
+                <div class="flex items-center justify-center gap-4 mb-8 w-full max-w-sm">
+                    <!-- Resume Icon -->
+                    <div class="w-12 h-12 bg-zinc-100 dark:bg-zinc-800 rounded-lg flex items-center justify-center shadow-sm">
+                        <svg class="w-6 h-6 text-zinc-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                    </div>
+
+                    <!-- Animated Arrow / Data Stream -->
+                    <div class="flex-1 relative flex items-center justify-center h-8">
+                        <div class="absolute w-full h-0.5 bg-zinc-200 dark:bg-zinc-700 rounded"></div>
+                        <div class="absolute w-1/3 h-1 bg-zinc-900 dark:bg-white rounded-full animate-[ping_1.5s_ease-in-out_infinite] left-0"></div>
+                        <svg class="w-5 h-5 text-zinc-900 dark:text-white absolute right-0 animate-pulse" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </div>
+
+                    <!-- AI Brain Icon -->
+                    <div class="w-12 h-12 bg-zinc-900 dark:bg-white rounded-lg flex items-center justify-center shadow-sm animate-pulse">
+                        <svg class="w-6 h-6 text-white dark:text-zinc-900" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    </div>
+                </div>
+
+                <h2 class="text-2xl font-bold text-zinc-900 dark:text-white">AI is evaluating your CV</h2>
+                <p class="mt-2 text-sm text-zinc-500">Extracting context and calculating fit...</p>
             </div>
+            
         {% elif check.status == 'COMPLETED' %}
+        
             <div class="flex items-center gap-6 mb-8 pb-8 border-b border-zinc-100 dark:border-zinc-800">
                 <div class="text-5xl font-black text-zinc-900 dark:text-white">{{ check.match_score }}</div>
                 <div>
