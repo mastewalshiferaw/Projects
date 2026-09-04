@@ -18,18 +18,24 @@ from django.contrib import admin
 from django.urls import path, include 
 from django.conf import settings
 from django.conf.urls.static import static
+from core.views import GoogleLogin, LinkedInLogin
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 urlpatterns = [
     path('kingsadd/', admin.site.urls),
 
-    path('accounts/', include('django.contrib.auth.urls')), 
+    
+
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/', include('allauth.urls')),
     
    
     path('', include('core.urls')), 
 
     # --API Authentication endpoints 
     path('api/auth/', include('dj_rest_auth.urls')), 
-      path('api/auth/registration/', include('dj_rest_auth.registration.urls')), # Sign Up
+    path('api/auth/registration/', include('dj_rest_auth.registration.urls')), 
+    path('api/auth/google/', GoogleLogin.as_view(), name='google_login'),
+    path('api/auth/linkedin/', LinkedInLogin.as_view(), name='linkedin_login'),
     
     # SWAGGER UI ENDPOINTS
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
