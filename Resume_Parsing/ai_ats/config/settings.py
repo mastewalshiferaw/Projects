@@ -157,9 +157,10 @@ SOCIALACCOUNT_PROVIDERS = {
             'secret': os.getenv('LINKEDIN_CLIENT_SECRET', ''),
             'key': ''
         },
-        'SCOPE': ['r_liteprofile', 'r_emailaddress'],
+        
+        'SCOPE': ['openid', 'profile', 'email'],
     }
-}
+}  
 
 
 # Password validation
