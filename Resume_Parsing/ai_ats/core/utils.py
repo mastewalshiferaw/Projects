@@ -1,12 +1,12 @@
+# core/utils.py
 import os
 import json
 import re
 import random
 from django.conf import settings
 from pdfminer.high_level import extract_text
-
 from openai import OpenAI
-import google.generativeai as genai
+from google import genai
 
 def extract_text_from_pdf(pdf_path):
     try:
@@ -19,22 +19,28 @@ def extract_text_from_pdf(pdf_path):
         return ""
 
 def smart_local_matcher(raw_text, job_description):
-    """Intelligent local fallback using TF-IDF vector similarity. ZERO API CALLS."""
-    print("[SYSTEM] All APIs failed. Using Offline TF-IDF Matcher...")
-    
-    # LAZY LOADING: Only load the massive machine learning libraries if we actually need them!
-    from sklearn.feature_extraction.text import TfidfVectorizer
-    from sklearn.metrics.pairwise import cosine_similarity
-    
+    """0-RAM Pure Python Failsafe. No heavy ML libraries needed!"""
+    print("[SYSTEM] All APIs failed. Using Pure Python Offline Matcher...")
     if not raw_text or not job_description:
-        return {"match_score": 0, "ai_explanation": "Insufficient text provided."}
+        return {"match_score": 0, "ai_explanation": "Insufficient text."}
 
-    vectorizer = TfidfVectorizer(stop_words='english')
-    try:
-        tfidf_matrix = vectorizer.fit_transform([job_description, raw_text])
-        score = int(cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])[0][0] * 100)
-    except Exception:
-        score = 25  
+    # Clean the text and find exact matching words
+    resume_words = set(re.findall(r'\b[a-zA-Z]{4,}\b', raw_text.lower()))
+    job_words = set(re.findall(r'\b[a-zA-Z]{4,}\b', job_description.lower()))
+    
+    matched = list(job_words.intersection(resume_words))[:8]
+    missing = list(job_words - resume_words)[:8]
+    
+    score = int((len(matched) / (len(matched) + len(missing) + 1)) * 100) if job_words else 0
+
+    return {
+        "applicant_name": "Applicant (Local Mode)",
+        "email": "N/A", "phone": "N/A", "location": "N/A", "years_of_experience": 0,
+        "skills": matched, "match_score": score,
+        "match_breakdown": {"strong_matches": matched, "partial_matches": [], "missing_requirements": missing},
+        "ai_explanation": f"Calculated using local keyword matching (Score: {score}%).",
+        "improvement_suggestions": [f"Consider adding missing keywords: {', '.join(missing[:4])}."]
+    }
 
 def clean_json_response(raw_string):
     cleaned = raw_string.strip()
@@ -44,7 +50,6 @@ def clean_json_response(raw_string):
     return cleaned.strip()
 
 def call_openai_compatible(api_key, base_url, model_name, system_prompt, user_content):
-    """Helper function to call ANY OpenAI-compatible API."""
     client = OpenAI(api_key=api_key, base_url=base_url, timeout=20.0)
     response = client.chat.completions.create(
         model=model_name,
@@ -58,20 +63,16 @@ def call_openai_compatible(api_key, base_url, model_name, system_prompt, user_co
     return json.loads(clean_json_response(response.choices[0].message.content))
 
 def call_gemini(api_key, system_prompt, user_content):
-    """Helper function for Google Gemini."""
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-1.5-flash')
-    response = model.generate_content(
-        f"{system_prompt}\n\n{user_content}",
-        generation_config=genai.GenerationConfig(response_mime_type="application/json", temperature=0.1)
+    """Uses the new google-genai 2026 SDK"""
+    client = genai.Client(api_key=api_key)
+    response = client.models.generate_content(
+        model='gemini-1.5-flash',
+        contents=f"{system_prompt}\n\n{user_content}",
+        config={"response_mime_type": "application/json", "temperature": 0.1}
     )
     return json.loads(clean_json_response(response.text))
 
 def parse_resume_with_ai(raw_text, job_description, is_student_mode=False):
-    """
-    ULTIMATE LOAD-BALANCING AI ROUTER.
-    Shuffles available APIs to distribute traffic and avoid rate limits.
-    """
     clean_resume = raw_text[:12000]
     clean_job = job_description[:8000]
 
@@ -89,9 +90,6 @@ Score is 0-100. Do not hallucinate."""
     providers = []
     if os.getenv('GEMINI_API_KEY'): providers.append('gemini')
     if os.getenv('OPENAI_API_KEY'): providers.append('openai')
-    if os.getenv('TOGETHER_API_KEY'): providers.append('together')
-    if os.getenv('MISTRAL_API_KEY'): providers.append('mistral')
-    if os.getenv('DEEPSEEK_API_KEY'): providers.append('deepseek')
 
     random.shuffle(providers)
     print(f"[AI ROUTER] Routing traffic through order: {providers}")
@@ -103,12 +101,6 @@ Score is 0-100. Do not hallucinate."""
                 data = call_gemini(os.getenv('GEMINI_API_KEY'), system_prompt, user_content)
             elif provider == 'openai':
                 data = call_openai_compatible(os.getenv('OPENAI_API_KEY'), "https://api.openai.com/v1", "gpt-4o-mini", system_prompt, user_content)
-            elif provider == 'together':
-                data = call_openai_compatible(os.getenv('TOGETHER_API_KEY'), "https://api.together.xyz/v1", "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo", system_prompt, user_content)
-            elif provider == 'mistral':
-                data = call_openai_compatible(os.getenv('MISTRAL_API_KEY'), "https://api.mistral.ai/v1", "mistral-small-latest", system_prompt, user_content)
-            elif provider == 'deepseek':
-                data = call_openai_compatible(os.getenv('DEEPSEEK_API_KEY'), "https://api.deepseek.com", "deepseek-chat", system_prompt, user_content)
             
             print(f"[AI ROUTER] SUCCESS using {provider.upper()}!")
             return data
@@ -116,6 +108,5 @@ Score is 0-100. Do not hallucinate."""
         except Exception as e:
             print(f"[AI ERROR] {provider.upper()} failed: {e}. Moving to next provider...")
 
-
-    print("[AI ROUTER] CRITICAL: All providers failed.")
+    print("[AI ROUTER] CRITICAL: All API Providers Failed.")
     return smart_local_matcher(clean_resume, clean_job)
