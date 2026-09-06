@@ -4,8 +4,7 @@ import re
 import random
 from django.conf import settings
 from pdfminer.high_level import extract_text
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+
 from openai import OpenAI
 import google.generativeai as genai
 
@@ -20,28 +19,22 @@ def extract_text_from_pdf(pdf_path):
         return ""
 
 def smart_local_matcher(raw_text, job_description):
-    """Offline Failsafe using TF-IDF."""
+    """Intelligent local fallback using TF-IDF vector similarity. ZERO API CALLS."""
     print("[SYSTEM] All APIs failed. Using Offline TF-IDF Matcher...")
+    
+    # LAZY LOADING: Only load the massive machine learning libraries if we actually need them!
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    from sklearn.metrics.pairwise import cosine_similarity
+    
     if not raw_text or not job_description:
-        return {"match_score": 0, "ai_explanation": "Insufficient text."}
+        return {"match_score": 0, "ai_explanation": "Insufficient text provided."}
+
     vectorizer = TfidfVectorizer(stop_words='english')
     try:
         tfidf_matrix = vectorizer.fit_transform([job_description, raw_text])
         score = int(cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])[0][0] * 100)
     except Exception:
         score = 25  
-    job_words = set(re.findall(r'\b[a-zA-Z]{3,}\b', job_description.lower()))
-    resume_words = set(re.findall(r'\b[a-zA-Z]{3,}\b', raw_text.lower()))
-    matched = list(job_words.intersection(resume_words))[:8]
-    missing = list(job_words - resume_words)[:8]
-    return {
-        "applicant_name": "Applicant (Local Mode)",
-        "email": "N/A", "phone": "N/A", "location": "N/A", "years_of_experience": 0,
-        "skills": matched, "match_score": score,
-        "match_breakdown": {"strong_matches": matched, "partial_matches": [], "missing_requirements": missing},
-        "ai_explanation": f"Calculated using local TF-IDF (Cosine Similarity: {score}%).",
-        "improvement_suggestions": [f"Consider adding missing keywords: {', '.join(missing[:4])}."]
-    }
 
 def clean_json_response(raw_string):
     cleaned = raw_string.strip()
