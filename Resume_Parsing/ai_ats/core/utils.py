@@ -1,12 +1,11 @@
-# core/utils.py
 import os
 import json
 import re
 import random
+import requests  
 from django.conf import settings
 from pdfminer.high_level import extract_text
 from openai import OpenAI
-from google import genai
 
 def extract_text_from_pdf(pdf_path):
     try:
@@ -19,12 +18,11 @@ def extract_text_from_pdf(pdf_path):
         return ""
 
 def smart_local_matcher(raw_text, job_description):
-    """0-RAM Pure Python Failsafe. No heavy ML libraries needed!"""
+    """0-RAM Pure Python Failsafe. No libraries needed!"""
     print("[SYSTEM] All APIs failed. Using Pure Python Offline Matcher...")
     if not raw_text or not job_description:
         return {"match_score": 0, "ai_explanation": "Insufficient text."}
 
-    # Clean the text and find exact matching words
     resume_words = set(re.findall(r'\b[a-zA-Z]{4,}\b', raw_text.lower()))
     job_words = set(re.findall(r'\b[a-zA-Z]{4,}\b', job_description.lower()))
     
@@ -62,15 +60,27 @@ def call_openai_compatible(api_key, base_url, model_name, system_prompt, user_co
     )
     return json.loads(clean_json_response(response.choices[0].message.content))
 
-def call_gemini(api_key, system_prompt, user_content):
-    """Uses the new google-genai 2026 SDK"""
-    client = genai.Client(api_key=api_key)
-    response = client.models.generate_content(
-        model='gemini-1.5-flash',
-        contents=f"{system_prompt}\n\n{user_content}",
-        config={"response_mime_type": "application/json", "temperature": 0.1}
-    )
-    return json.loads(clean_json_response(response.text))
+def call_gemini_rest_api(api_key, system_prompt, user_content):
+    """Direct REST API call to Google Gemini. 100% crash-proof."""
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+    headers = {'Content-Type': 'application/json'}
+    payload = {
+        "contents": [{
+            "parts": [{"text": f"{system_prompt}\n\n{user_content}"}]
+        }],
+        "generationConfig": {
+            "responseMimeType": "application/json",
+            "temperature": 0.1
+        }
+    }
+    
+    response = requests.post(url, json=payload, headers=headers)
+    response.raise_for_status() # Raises error if Google rejects the key
+    
+    data = response.json()
+    ai_text = data['candidates'][0]['content']['parts'][0]['text']
+    return json.loads(clean_json_response(ai_text))
+
 
 def parse_resume_with_ai(raw_text, job_description, is_student_mode=False):
     clean_resume = raw_text[:12000]
@@ -98,7 +108,7 @@ Score is 0-100. Do not hallucinate."""
         print(f"[AI ROUTER] Attempting connection to: {provider.upper()}...")
         try:
             if provider == 'gemini':
-                data = call_gemini(os.getenv('GEMINI_API_KEY'), system_prompt, user_content)
+                data = call_gemini_rest_api(os.getenv('GEMINI_API_KEY'), system_prompt, user_content)
             elif provider == 'openai':
                 data = call_openai_compatible(os.getenv('OPENAI_API_KEY'), "https://api.openai.com/v1", "gpt-4o-mini", system_prompt, user_content)
             
