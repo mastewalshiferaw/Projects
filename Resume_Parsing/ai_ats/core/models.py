@@ -33,6 +33,17 @@ class Resume(models.Model):
     
     status = models.CharField(max_length=20, default='PENDING')
 
+    PIPELINE_CHOICES = [
+        ('APPLIED', 'Applied'),
+        ('SHORTLISTED', 'Shortlisted'),
+        ('INTERVIEW', 'Interviewing'),
+        ('OFFER', 'Offer Extended'),
+        ('HIRED', 'Hired'),
+        ('REJECTED', 'Rejected'),
+    ]
+    pipeline_status = models.CharField(max_length=20, choices=PIPELINE_CHOICES, default='APPLIED')
+
+
     def __str__(self):
         return f"Resume for {self.job.title} - {self.applicant_name or 'Unknown'}"
 
